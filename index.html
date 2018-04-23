@@ -20,10 +20,6 @@
   function makeViz(err, data) {
     console.log("Data Loaded!");
 
-    var bubble_svg = d3.select("#bubble-svg"),
-      width = +bubble_svg.attr("width"),
-      height = +bubble_svg.attr("height");
-
     var sampleData = {
       "children": [{
           "text": "hello",
@@ -66,11 +62,19 @@
     }
     //NOTE!: The "children" field is very important to include!
 
+    var bubble_svg = d3.select("#bubble-svg"),
+      width = +bubble_svg.attr("width"),
+      height = +bubble_svg.attr("height");
+
     var color = d3.scaleOrdinal(d3.schemeCategory20);
 
     var bubble = d3.pack(sampleData)
       .size([width, height])
       .padding(1.5);
+
+    var bubble_tooltip = d3.select("body").append("div")
+      .style("position", "absolute")
+      .html("test");
 
     var nodes = d3.hierarchy(sampleData)
       .sum(d => d.count);
@@ -97,8 +101,33 @@
       .attr("font-size", (d => d.r / 5))
       .attr("fill", "white")
       .text(d => d.data.text)
+
+    // Overlayed, transparent circle
+    node.append("circle")
+      .attr("class", "overlay")
+      .attr("r", d => d.r)
+      .style("opacity", 0)
+      .on("mouseover", showToolTip)
+      .on("mousemove", moveToolTip)
+      .on("mouseout", hideToolTip);
+
+    function moveToolTip(){
+      bubble_tooltip
+      .style("top", 12 + d3.event.pageY +"px")
+      .style("left", 12 + d3.event.pageX+"px");
+    }
+
+    function showToolTip(){
+      bubble_tooltip
+      .style("display", "inline")
+    }
+
+    function hideToolTip(){
+      bubble_tooltip
+      .style("display", "none");
+    }
   }
-  
+
   //Bubble viz credit: https://bl.ocks.org/alokkshukla/3d6be4be0ef9f6977ec6718b2916d168
 </script>
 
