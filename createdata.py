@@ -9,7 +9,7 @@ import json
 with open("profiles.csv") as f:
     df = pd.read_csv(f)
 
-N = 1
+N = 50
 top_n = df.location.value_counts().head(n=N).index.tolist() #np array
 essays = ["essay0", "essay1", "essay2", "essay3", "essay4", "essay5", "essay6", "essay7", "essay8", "essay9"]
 
