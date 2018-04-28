@@ -23,9 +23,10 @@
   //Loading in Data
   d3.queue()
     .defer(d3.csv, "profiles.csv")
+    .defer(d3.json, "okcupid.json")
     .await(makeViz);
 
-  function makeViz(err, data) {
+  function makeViz(err, data, jsondata) {
     console.log("Data Loaded!");
 
     var sampleData = {
@@ -68,6 +69,27 @@
 
       ]
     }
+
+    var gender = "f";
+    var essayq = "essay0";
+    var jData = jsondata.filter( d => (d.gender == gender && d.essay == essayq))[0];
+    // jData.top_word = jData.top_word.slice(100, 200);
+    console.log(jData);
+    sampleData1 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+
+    var gender = "m";
+    var essayq = "essay0";
+    var jData = jsondata.filter( d => (d.gender == gender && d.essay == essayq))[0];
+    // jData.top_word = jData.top_word.slice(100, 200);
+    console.log(jData);
+    sampleData2 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+
+
+    sampleData =  {"children": sampleData1.children.concat(sampleData2.children)};
+
+    console.log(sampleData);
+
+
     //NOTE!: The "children" field is very important to include!
 
     var bubble_svg = d3.select("#bubble-svg"),
@@ -100,7 +122,7 @@
 
     node.append("circle")
       .attr("r", d => d.r)
-      .style("fill", (d, i) => color(i));
+      .style("fill", (d, i) => (d.data.gender =="f" ? "red": "blue"));
 
     node.append("text")
       .attr("dy", ".2em")
