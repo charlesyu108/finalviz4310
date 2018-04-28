@@ -1,0 +1,115 @@
+{
+   "type": "FeatureCollection",
+   "features": [
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.431297,37.773972]
+    },
+    "properties": {
+    "city":"san francisco, california",
+    "users":31064
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.271111,37.804363 ]
+    },
+    "properties": {
+    "city":"oakland, california",
+    "users":7214
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.27275,37.87159 ]
+    },
+    "properties": {
+    "city":"berkeley, california",
+    "users":4212
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.32553,37.56299 ]
+    },
+    "properties": {
+    "city":"san mateo, california",
+    "users":1331
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.143936,37.468319 ]
+    },
+    "properties": {
+    "city":"palo alto, california",
+    "users":1064
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.241638,37.765205 ]
+    },
+    "properties": {
+    "city":"alameda, california",
+    "users":910
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.53108,37.9735346 ]
+    },
+    "properties": {
+    "city":"san rafael, california",
+    "users":755
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.080795,37.668819 ]
+    },
+    "properties": {
+    "city":"hayward, california",
+    "users":747
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.285248,37.831318 ]
+    },
+    "properties": {
+    "city":"emeryville, california",
+    "users":738
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ -122.2363548,37.4852152 ]
+    },
+    "properties": {
+    "city":"redwood city, california",
+    "users":693
+    }
+  }
+]
+}
