@@ -15,7 +15,7 @@
 <body>
   <h1>INFO 4310 Final Project</h1>
   <svg id="bubble-svg" width=800 height=600></svg>
-  
+
   <div id="map" style="height:650px;width:500px;display:block"></div>
 </body>
 
@@ -27,7 +27,7 @@
     .await(makeViz);
 
   function makeViz(err, data, jsondata) {
-    console.log("Data Loaded!");
+    console.log("Data Loaded!", data.length);
 
     var sampleData = {
       "children": [{
@@ -69,25 +69,32 @@
 
       ]
     }
+    var essayq = "essay6";
 
     var gender = "f";
-    var essayq = "essay0";
+    // var essayq = "essay0";
     var jData = jsondata.filter( d => (d.gender == gender && d.essay == essayq))[0];
     // jData.top_word = jData.top_word.slice(100, 200);
     console.log(jData);
     sampleData1 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+    femaletext = sampleData1.children.map(d => d.text);
 
     var gender = "m";
-    var essayq = "essay0";
+    // var essayq = "essay0";
     var jData = jsondata.filter( d => (d.gender == gender && d.essay == essayq))[0];
     // jData.top_word = jData.top_word.slice(100, 200);
     console.log(jData);
     sampleData2 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
-
+    maletext = sampleData2.children.map(d => d.text);
 
     sampleData =  {"children": sampleData1.children.concat(sampleData2.children)};
 
     console.log(sampleData);
+    console.log("shared", maletext.filter(d => femaletext.indexOf(d) > -1));
+    console.log("male-only", maletext.filter(d => femaletext.indexOf(d) == -1));
+    console.log("female-only", femaletext.filter(d => maletext.indexOf(d) == -1));
+
+
 
 
     //NOTE!: The "children" field is very important to include!
@@ -160,7 +167,6 @@
 
   //Bubble viz credit: https://bl.ocks.org/alokkshukla/3d6be4be0ef9f6977ec6718b2916d168
 </script>
-
 
 
 </html>
