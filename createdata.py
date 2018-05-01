@@ -20,7 +20,7 @@ with open('okcupid.json', 'w') as outfile:
 	json_array = []
 	for i in range(N): #N is top n cities
 		for essay in essays:
-			cvect = CountVectorizer(stop_words="english", preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features =200, ngram_range=(1,2))
+			cvect = CountVectorizer(stop_words="english, nan", preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features =200, ngram_range=(1,2))
 			counts = cvect.fit_transform(df[df.location == top_n[i]][essay].values.astype('U'))
 			counts_sum = (counts.toarray().sum(axis=0)).tolist()
 			cvect_dict = cvect.vocabulary_ #ohh these are just indexes cuz vector is always the same cuz vector space model

@@ -197,46 +197,74 @@ var clusters = new Array(m);
 
 d3.json("okcupid.json", function(error, data) {
   if (error) throw error;
-  console.log(data);
 
-  var essayq = 1;
+  var essayq = "essay0";
 
   nodes = [];
 
-  data.forEach(function(point) {
-    if(point.essay == "essay"+essayq) {
+  var gender = "f";
+  var jData = data.filter( d => (d.gender == gender && d.essay == essayq))[0];
+  jData.top_word = jData.top_word.slice(100, 200);
+  sampleData1 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+  femaletext = sampleData1.children.map(d => d.text);
+
+  var gender = "m";
+  var jData = data.filter( d => (d.gender == gender && d.essay == essayq))[0];
+  jData.top_word = jData.top_word.slice(100, 200);
+  sampleData2 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+  maletext = sampleData2.children.map(d => d.text);
+
+  sampleData =  {"children": sampleData1.children.concat(sampleData2.children)};
+
+  var sharedText = maletext.filter(d => femaletext.indexOf(d) > -1);
+  var maleData = sampleData2.children.filter(d => sharedText.indexOf(d.text) == -1)
+  var femaleData = sampleData1.children.filter(d => sharedText.indexOf(d.text) == -1)
+  var sharedData = sampleData1.children.filter(d => sharedText.indexOf(d.text) > -1)
+  console.log("shared: "+JSON.stringify(sharedData));
+  console.log("male: "+JSON.stringify(maleData));
+  console.log("female: "+JSON.stringify(femaleData));
+
+  console.log(sampleData.children);
+  //console.log("male-only", maletext.filter(d => femaletext.indexOf(d) == -1));
+  //console.log("female-only", femaletext.filter(d => maletext.indexOf(d) == -1));
+
+  sampleData.children.forEach(function(point) {
       var i = getCluster(point);
       var col = getColor(point);
-      point.top_word.forEach(function(p) {
-        var r = getRadius(p[1]);
-        var d = {
-              cluster: i,
-              radius: r,
-              x: getX(i) + Math.random(),
-              y: height / 2 + Math.random(),
-              text: p[0],
-              color: col
-            };
-        if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
-        nodes.push(d);
-      })
-    }
+      var r = getRadius(point.count);
+      var d = {
+            cluster: i,
+            radius: r,
+            x: getX(i) + Math.random(),
+            y: height / 2 + Math.random(),
+            color: col,
+            text: point.text
+          };
+      if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
+      nodes.push(d);
+      
+    
   });
-  console.log(nodes);
 
   function getColor(point) {
 
-    if(point.gender == "f") {
+    if(point.gender == "f" && sharedText.indexOf(point.text) == -1) {
       return "red"
     }
-    else {
+    else if(point.gender == "m" && sharedText.indexOf(point.text) == -1) {
       return "blue"
+    }
+    else {
+      return "#9932CC"
     }
   }
 
   function getCluster(d) {
-    if(d.gender == "f") {
+    if(d.gender == "f" && sharedText.indexOf(d.text) == -1) {
       return 0;
+    }
+    else if(d.gender == "m" && sharedText.indexOf(d.text) == -1) {
+      return 2;
     }
     else {
       return 1;
@@ -244,17 +272,22 @@ d3.json("okcupid.json", function(error, data) {
   }
 
   function getRadius(d) {
-    return d/200;
+    return d/100;
   }
 
   function getX(i) {
     if(i==0) {
-      return (0)
+      return (-width/3)
     }
     else if(i==1) {
-      return (width/2)
+      return (-width/10)
+    }
+    else {
+      return (width/8)
     }
   }
+
+  console.log(nodes);
 
   var force = d3.forceSimulation()
     // keep entire simulation balanced around screen center
