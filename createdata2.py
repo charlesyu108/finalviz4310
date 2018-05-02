@@ -4,10 +4,13 @@ from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text 
+from nltk.tokenize import TweetTokenizer
 
 import operator
 import json
 
+
+tweettokenizer = TweetTokenizer()
 
 with open("meep.csv") as f:
     df = pd.read_csv(f)
@@ -23,6 +26,44 @@ def preprocessed(s):
 english_plus = set(text.ENGLISH_STOP_WORDS)
 english_plus.add("nan")
 english_plus.add("sf")
+english_plus.add("san")
+english_plus.add("francisco")
+english_plus.add('.')
+english_plus.add(',')
+english_plus.add('/')
+english_plus.add('!')
+english_plus.add('?')
+english_plus.add(':')
+english_plus.add(')')
+english_plus.add('(')
+english_plus.add('...')
+english_plus.add('-')
+english_plus.add('\"')
+english_plus.add("'")
+english_plus.add("*")
+english_plus.add(";")
+english_plus.add("..")
+english_plus.add(":)")
+english_plus.add(":D")
+english_plus.add(":(")
+english_plus.add(":/")
+english_plus.add("&")
+english_plus.add("^")
+english_plus.add("$")
+english_plus.add("#")
+english_plus.add("@")
+english_plus.add("~")
+english_plus.add("`")
+english_plus.add("=")
+english_plus.add("_")
+english_plus.add("|")
+english_plus.add('"')
+english_plus.add('[')
+english_plus.add(']')
+english_plus.add('{')
+english_plus.add('}')
+
+
 
 # json_both = []
 # json_male = []
@@ -33,7 +74,7 @@ for essay in essays:
 	female_dict = {}
 	male_dict = {}
 	pattern = "(?u)\\b[\\w-]+\\b"
-	cvect = TfidfVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, ngram_range=(1,2))
+	cvect = TfidfVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, tokenizer=tweettokenizer.tokenize, ngram_range=(1,2))
 	# females
 	counts = cvect.fit_transform(df[df.sex == 'f'][essay].values.astype('U'))
 	counts_sum = (counts.toarray().sum(axis=0)).tolist()
@@ -64,7 +105,7 @@ for essay in essays:
 	# sorted_m_count = [x[1] for x in sorted_top_m]
 	
 	sorted_top_both = sorted(shared_dict.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_bothdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_both]
+	sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'mcount': male_dict[x[0]]} for x in sorted_top_both]
 	# sorted_both_word = [x[0] for x in sorted_top_both]
 	# sorted_both_count = [x[1] for x in sorted_top_both]
 
@@ -73,7 +114,7 @@ for essay in essays:
 	json_array.append(meep)
 
 
-with open('potato3.json', 'w') as outfile:
+with open('potato5.json', 'w') as outfile:
 
 	json.dump(json_array, outfile, indent=4)
 
