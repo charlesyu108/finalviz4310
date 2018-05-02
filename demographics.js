@@ -5,12 +5,13 @@
 
 // Define Canvas Related params
 const screenScale = window.devicePixelRatio || 1;
-var width = 800;
+var width = 600;
 var height = 600;
 var pointWidth = 2;
 var pointHeight = 2;
 const duration = 1500;
 const ease = d3.easeCubic;
+const timer = d3.timer(x => x); // Dummy callback
 
 // Building the canvas
 const canvas = d3.select('body').append('canvas')
@@ -27,19 +28,26 @@ function makeViz(error, profiles) {
   // Init points
   const points = profiles;
   points.forEach(function(d) {
-    d.id = d[""];
     d.color = d.sex == "m" ? "blue" : "red";
-    d.x = 100*Math.random() + width/2;
-    d.y = 100*Math.random() + height/2;
   });
 
+  // Start in center
+  toCenter(points);
   draw();
-  animate(randomLayout)
 
+  animate(randomLayout);
+
+  // Button actions
   d3.select("#gender")
-  .on("click", _ =>   animate(genderLayout));
+  .on("click", _ =>  animate(genderLayout));
 
+  d3.select("#age")
+    .on("click", _ => {
+      animate(toCenter);
+      setTimeout(x => showAgeDist(), 1500);
+    });
   /* >>>>>>>>>>>>>> ====== BEGIN utility functions ======= <<<<<<<<<<<<<<<<<<< */
+
   // draw the points based on their current layout
   function draw() {
     const ctx = canvas.node().getContext('2d');
@@ -57,7 +65,6 @@ function makeViz(error, profiles) {
     ctx.restore();
   }
 
-
   function animate(newLayout) {
     // Setting souce points
     points.forEach(point => {
@@ -71,7 +78,7 @@ function makeViz(error, profiles) {
       point.ty = point.y;
     });
 
-    timer = d3.timer((elapsed) => {
+    timer.restart((elapsed) => {
       // compute how far through the animation we are (0 to 1)
       const t = Math.min(1, ease(elapsed / duration));
       // update point positions (interpolate between source and target)
@@ -79,17 +86,35 @@ function makeViz(error, profiles) {
         point.x = point.sx * (1 - t) + point.tx * t;
         point.y = point.sy * (1 - t) + point.ty * t;
       });
-      // update what is drawn on screen
-      draw();
-      // if this animation is over
-      if (t === 1) {
-        // stop this timer since we are done animating.
+      draw(); // update what is drawn on screen
+      // if this animation is over, stop this timer since we are done animating.
+      if (t >= 1){
         timer.stop();
       }
     });
   }
-  /* >>>>>>>>>>>>>> ====== END utility functions ======= <<<<<<<<<<<<<<<<<<< */
-}
+
+  function showAgeDist(){
+    const ctx = canvas.node().getContext('2d');
+    // ctx.save();
+    // erase what is on the canvas currently
+    console.log("Hello");
+    ctx.clearRect(0, 0, width, height);
+
+    age = new Array(100).fill(0);
+    points.forEach(d => age[d.age] += 1);
+    min_age = 18;
+    max_count = d3.max(age);
+    barWidth = width/(100 - 18);
+    heightUnit = (height-100)/max_count;
+    age.forEach(function(count, a){
+      ctx.fillRect((a-min_age)*barWidth, height -  heightUnit*count, barWidth, heightUnit*count);
+    });
+    ctx.restore();
+  }
+} // End of makeViz
+
+
 /**
  * >>>>>>>>>>>>>> ====== BEGIN Layout functions ======= <<<<<<<<<<<<<<<<<<<
  * Each layout fn defines new point arrangement.
@@ -105,8 +130,7 @@ function ageLayout(points) {
     d.y = height - age[d.age]
     age[d.age] += 1
   });
-  // console.log(x,y, max_x, max_y);
-  console.log(age);
+
   return points;
 }
 
@@ -137,4 +161,11 @@ function randomLayout(points){
   });
   return points;
 }
-/* >>>>>>>>>>>>>>>>>> ====== END Layout functions ======= <<<<<<<<<<<<<<<<<< */
+
+function toCenter(points){
+  points.forEach(function(d){
+    d.x = width/2;
+    d.y = height/2
+  });
+  return points;
+}
