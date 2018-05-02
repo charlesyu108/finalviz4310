@@ -2,6 +2,8 @@
 <html>
 
 <head>
+  <script src="https://d3plus.org/js/d3.js"></script>
+  <script src="https://d3plus.org/js/d3plus.js"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <link href="styles.css" rel="stylesheet"></link>
   <script src="https://d3js.org/d3-collection.v1.min.js"></script>
@@ -9,6 +11,7 @@
   <script src="https://d3js.org/d3-quadtree.v1.min.js"></script>
   <script src="https://d3js.org/d3-timer.v1.min.js"></script>
   <script src="https://d3js.org/d3-force.v1.min.js"></script>
+  
 </head>
 
 <style>
@@ -226,7 +229,7 @@ d3.json("okcupid.json", function(error, data) {
   sampleData.children.forEach(function(point) {
       var i = getCluster(point);
       var col = getColor(point);
-      var r = getRadius(point.count);
+      var r = 3*(point.text.length);
       var d = {
             cluster: i,
             radius: r,
@@ -269,7 +272,7 @@ d3.json("okcupid.json", function(error, data) {
   }
 
   function getRadius(d) {
-    return d/70;
+    return d/60;
   }
 
   function getX(i) {
@@ -305,10 +308,10 @@ d3.json("okcupid.json", function(error, data) {
       .attr("width", width)
       .attr("height", height);
 
-  var node = svg.selectAll("rect")
+  var node = svg.selectAll("circle")
       .data(nodes)
     .enter().append("circle")
-      .style("fill", "none") 
+      .style("fill", function(d) {return d.color}) 
       .on("click", function(d) { console.log(d)})
       .on("mouseover", function(d) {
           d3.select(this).style("cursor", "pointer");
@@ -319,13 +322,19 @@ d3.json("okcupid.json", function(error, data) {
             .enter()
             .append("text")
               .text(function(d) {return d.text})
+              .attr("class", "circleResize")
               .style("text-anchor", "middle")
-              .style("fill", function(d) {return d.color})
+              .style("fill", "#111")
               .style("font-family", "Arial")
-              .style("font-size", function(d) {return 7+(d.radius/2)})
+              .style("font-size", 12)/*function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })*/
               .on("mouseover", function(d) {
                 d3.select(this).style("cursor", "pointer"); 
               });
+
+  d3plus.textwrap()
+    .container(d3.select(".circleResize"))
+    .resize(true)
+    .draw();
 
   function layoutTick(e) {
     node
