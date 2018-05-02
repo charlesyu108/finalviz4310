@@ -54,22 +54,26 @@ for essay in essays:
 		shared_dict[common_word] = male_dict[common_word] + female_dict[common_word]
 
 	sorted_top_f = sorted(female_dict.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_f_word = [x[0] for x in sorted_top_f]
-	sorted_f_count = [x[1] for x in sorted_top_f]
+	sorted_top_fdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_f]
+	# sorted_f_word = [x[0] for x in sorted_top_f]
+	# sorted_f_count = [x[1] for x in sorted_top_f]
 	
 	sorted_top_m = sorted(male_dict.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_m_word = [x[0] for x in sorted_top_m]
-	sorted_m_count = [x[1] for x in sorted_top_m]
+	sorted_top_mdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_m]
+	# sorted_m_word = [x[0] for x in sorted_top_m]
+	# sorted_m_count = [x[1] for x in sorted_top_m]
 	
 	sorted_top_both = sorted(shared_dict.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_both_word = [x[0] for x in sorted_top_both]
-	sorted_both_count = [x[1] for x in sorted_top_both]
+	sorted_top_bothdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_both]
+	# sorted_both_word = [x[0] for x in sorted_top_both]
+	# sorted_both_count = [x[1] for x in sorted_top_both]
 
-	meep = {'essay':essay, 'female':sorted_f_word, 'female_count':sorted_f_count, 'male':sorted_m_word, 'male_count':sorted_m_count, 'both':sorted_both_word, 'both_count':sorted_both_count}
+	# meep = {'essay':essay, 'female':sorted_f_word, 'female_count':sorted_f_count, 'male':sorted_m_word, 'male_count':sorted_m_count, 'both':sorted_both_word, 'both_count':sorted_both_count}
+	meep = {'essay':essay, 'female': sorted_top_fdarray, 'male': sorted_top_mdarray ,'both': sorted_top_bothdarray}
 	json_array.append(meep)
 
 
-with open('potato2.json', 'w') as outfile:
+with open('potato3.json', 'w') as outfile:
 
 	json.dump(json_array, outfile, indent=4)
 
