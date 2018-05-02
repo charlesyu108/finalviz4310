@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text 
 
 import operator
@@ -21,6 +22,7 @@ def preprocessed(s):
 # nwords = 200
 english_plus = set(text.ENGLISH_STOP_WORDS)
 english_plus.add("nan")
+english_plus.add("sf")
 
 # json_both = []
 # json_male = []
@@ -30,7 +32,8 @@ for essay in essays:
 	shared_dict = {}
 	female_dict = {}
 	male_dict = {}
-	cvect = CountVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, ngram_range=(1,2))
+	pattern = "(?u)\\b[\\w-]+\\b"
+	cvect = TfidfVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, ngram_range=(1,2))
 	# females
 	counts = cvect.fit_transform(df[df.sex == 'f'][essay].values.astype('U'))
 	counts_sum = (counts.toarray().sum(axis=0)).tolist()
@@ -66,7 +69,7 @@ for essay in essays:
 	json_array.append(meep)
 
 
-with open('potato.json', 'w') as outfile:
+with open('potato2.json', 'w') as outfile:
 
 	json.dump(json_array, outfile, indent=4)
 
