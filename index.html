@@ -4,12 +4,6 @@
 <head>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <link href="styles.css" rel="stylesheet"></link>
-  <!-- mapbox -->
-  <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-  <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
   <script src="https://d3js.org/d3-collection.v1.min.js"></script>
   <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
   <script src="https://d3js.org/d3-quadtree.v1.min.js"></script>
@@ -184,11 +178,11 @@
 
 <script>
 
-var width = 900,
-    height = 700,
+var width = 1000,
+    height =550,
     padding = 1.5, // separation between same-color nodes
     clusterPadding = 6, // separation between different-color nodes
-    maxRadius = 12;
+    maxRadius = 25;
 
 var n = 200, // total number of nodes
     m = 2; // number of distinct clusters
@@ -220,6 +214,7 @@ d3.json("okcupid.json", function(error, data) {
   var maleData = sampleData2.children.filter(d => sharedText.indexOf(d.text) == -1)
   var femaleData = sampleData1.children.filter(d => sharedText.indexOf(d.text) == -1)
   var sharedData = sampleData1.children.filter(d => sharedText.indexOf(d.text) > -1)
+  sharedText = sharedText.slice(0,30);
   console.log("shared: "+JSON.stringify(sharedData));
   console.log("male: "+JSON.stringify(maleData));
   console.log("female: "+JSON.stringify(femaleData));
@@ -236,7 +231,7 @@ d3.json("okcupid.json", function(error, data) {
             cluster: i,
             radius: r,
             x: getX(i) + Math.random(),
-            y: height / 2 + Math.random(),
+            y: height + Math.random(),
             color: col,
             text: point.text
           };
@@ -255,7 +250,9 @@ d3.json("okcupid.json", function(error, data) {
       return "blue"
     }
     else {
-      return "#9932CC"
+      if(sharedText.indexOf(point.text) > -1) {
+        return "#9932CC"
+      }
     }
   }
 
@@ -272,7 +269,7 @@ d3.json("okcupid.json", function(error, data) {
   }
 
   function getRadius(d) {
-    return d/100;
+    return d/70;
   }
 
   function getX(i) {
@@ -280,10 +277,10 @@ d3.json("okcupid.json", function(error, data) {
       return (-width/3)
     }
     else if(i==1) {
-      return (-width/10)
+      return (-20)
     }
     else {
-      return (width/8)
+      return (width/3)
     }
   }
 
@@ -308,10 +305,10 @@ d3.json("okcupid.json", function(error, data) {
       .attr("width", width)
       .attr("height", height);
 
-  var node = svg.selectAll("circle")
+  var node = svg.selectAll("rect")
       .data(nodes)
     .enter().append("circle")
-      .style("fill", function(d) { return d.color; })
+      .style("fill", "none") 
       .on("click", function(d) { console.log(d)})
       .on("mouseover", function(d) {
           d3.select(this).style("cursor", "pointer");
@@ -323,9 +320,12 @@ d3.json("okcupid.json", function(error, data) {
             .append("text")
               .text(function(d) {return d.text})
               .style("text-anchor", "middle")
-              .style("fill", "#111")
+              .style("fill", function(d) {return d.color})
               .style("font-family", "Arial")
-              .style("font-size", function(d) {return 12-d.radius});
+              .style("font-size", function(d) {return 7+(d.radius/2)})
+              .on("mouseover", function(d) {
+                d3.select(this).style("cursor", "pointer"); 
+              });
 
   function layoutTick(e) {
     node
