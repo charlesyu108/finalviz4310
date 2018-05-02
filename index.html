@@ -27,11 +27,11 @@
 
 <body>
   <h1>INFO 4310 Final Project</h1>
-  <!-- <svg id="bubble-svg" width=800 height=600></svg> -->
-
+  <button id="gender">Show Gender</button>
 </body>
 
 
+<script src="demographics.js"></script>
 
 <!-- <script>
   //Loading in Data
@@ -242,8 +242,8 @@ d3.json("okcupid.json", function(error, data) {
           };
       if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
       nodes.push(d);
-      
-    
+
+
   });
 
   function getColor(point) {
@@ -303,7 +303,7 @@ d3.json("okcupid.json", function(error, data) {
 
     .on('tick', layoutTick)
     .nodes(nodes);
-    
+
   var svg = d3.select("body").append("svg")
       .attr("width", width)
       .attr("height", height);
@@ -314,7 +314,7 @@ d3.json("okcupid.json", function(error, data) {
       .style("fill", function(d) { return d.color; })
       .on("click", function(d) { console.log(d)})
       .on("mouseover", function(d) {
-          d3.select(this).style("cursor", "pointer"); 
+          d3.select(this).style("cursor", "pointer");
         });
 
   var label = svg.selectAll(".myText")
@@ -326,7 +326,7 @@ d3.json("okcupid.json", function(error, data) {
               .style("fill", "#111")
               .style("font-family", "Arial")
               .style("font-size", function(d) {return 12-d.radius});
-    
+
   function layoutTick(e) {
     node
         .attr("cx", function(d) { return d.x; })
@@ -352,7 +352,7 @@ d3.json("okcupid.json", function(error, data) {
       nodes.forEach(function(d) {
         var cluster = clusters[d.cluster];
         if (cluster === d) return;
-        
+
         let x = d.x - cluster.x,
           y = d.y - cluster.y,
           l = Math.sqrt(x * x + y * y),
