@@ -11,7 +11,7 @@
   <script src="https://d3js.org/d3-quadtree.v1.min.js"></script>
   <script src="https://d3js.org/d3-timer.v1.min.js"></script>
   <script src="https://d3js.org/d3-force.v1.min.js"></script>
-  
+
 </head>
 
 <style>
@@ -24,6 +24,7 @@
 
 <body>
   <h1>INFO 4310 Final Project</h1>
+  <button id= "unsort">Unsort</button>
   <button id="gender">Show Gender</button>
   <button id="age">Show Age</button>
 </body>
@@ -312,7 +313,7 @@ d3.json("okcupid.json", function(error, data) {
   var node = svg.selectAll("circle")
       .data(nodes)
     .enter().append("circle")
-      .style("fill", function(d) {return d.color}) 
+      .style("fill", function(d) {return d.color})
       .on("click", function(d) { console.log(d)})
       .on("mouseover", function(d) {
           d3.select(this).style("cursor", "pointer");
@@ -329,7 +330,7 @@ d3.json("okcupid.json", function(error, data) {
               .style("font-family", "Arial")
               .style("font-size", 12)/*function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })*/
               .on("mouseover", function(d) {
-                d3.select(this).style("cursor", "pointer"); 
+                d3.select(this).style("cursor", "pointer");
               });
 
   d3plus.textwrap()

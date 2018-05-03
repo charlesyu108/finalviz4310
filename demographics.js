@@ -4,8 +4,7 @@
  */
 
 // Define Canvas Related params
-const screenScale = window.devicePixelRatio || 1;
-var width = 600;
+var width = 800;
 var height = 600;
 var pointWidth = 2;
 var pointHeight = 2;
@@ -15,11 +14,22 @@ const timer = d3.timer(x => x); // Dummy callback
 
 // Building the canvas
 const canvas = d3.select('body').append('canvas')
-  .attr('width', width * screenScale)
-  .attr('height', height * screenScale)
+  .attr("id", "canvas")
+  .attr('width', width)
+  .attr('height', height)
   .style('width', `${width}px`)
   .style('height', `${height}px`);
-canvas.node().getContext('2d').scale(screenScale, screenScale);
+
+canvasDOM = document.getElementById("canvas").getBoundingClientRect();
+
+// SVG overlay
+svg = d3.select('body')
+    .append('svg')
+      .attr('width', canvasDOM.width)
+      .attr('height', canvasDOM.height)
+      .style("position", "absolute")
+      .style("top", canvasDOM.top)
+      .style("left", canvasDOM.left);
 
 // Load in Profiles data
 d3.queue().defer(d3.csv, "meep.csv").await(makeViz);
@@ -38,7 +48,10 @@ function makeViz(error, profiles) {
 
   // Button actions
   d3.select("#gender")
-  .on("click", _ =>  animate(genderLayout));
+    .on("click", _ => animate(genderLayout));
+
+  d3.select("#unsort")
+    .on("click", _ => animate(randomLayout));
 
   d3.select("#age")
     .on("click", _ => {
@@ -87,28 +100,49 @@ function makeViz(error, profiles) {
       });
       draw(); // update what is drawn on screen
       // if this animation is over, stop this timer since we are done animating.
-      if (t >= 1){
+      if (t >= 1) {
         timer.stop();
       }
     });
   }
 
-  function showAgeDist(){
-    ctx = canvas.node().getContext('2d');
-    ctx.save();
-    // erase what is on the canvas currently
-    ctx.clearRect(0, 0, width, height);
+  function showAgeDist() {
 
     age = new Array(100).fill(0);
     points.forEach(d => age[d.age] += 1);
     min_age = 18;
     max_count = d3.max(age);
-    barWidth = width/(100 - 18);
-    heightUnit = (height-100)/max_count;
-    age.forEach(function(count, a){
-      ctx.fillRect((a-min_age)*barWidth, height -  heightUnit*count, barWidth, heightUnit*count);
+    barWidth = width / (100 - 18);
+    heightUnit = (height - 100) / max_count;
+
+    agePoints = age.map(function(count, a) {
+      return {
+        "x": (a - min_age) * barWidth,
+        "ty": height - heightUnit * count,
+        "sy": height,
+        "width": barWidth,
+        "height_t": heightUnit * count
+      }
     });
-    ctx.restore();
+
+    timer.restart((elapsed) => {
+      // compute how far through the animation we are (0 to 1)
+      const t = Math.min(1, ease(elapsed / duration));
+      // update point positions (interpolate between source and target)
+      agePoints.forEach(point => {
+        point.height = point.height_t * t;
+        point.y = point.sy * (1 - t) + point.ty * t;
+      });
+      ctx = canvas.node().getContext('2d');
+      ctx.save();
+      // erase what is on the canvas currently
+      ctx.clearRect(0, 0, width, height);
+      // draw each point as a rectangle
+      agePoints.forEach(point => ctx.fillRect(point.x, point.y, point.width, point.height));
+      ctx.restore();
+      // if this animation is over, stop this timer since we are done animating.
+      if (t >= 1) timer.stop();
+    });
   }
 } // End of makeViz
 
@@ -152,18 +186,18 @@ function genderLayout(points) {
   return points;
 }
 
-function randomLayout(points){
-  points.forEach(function(d){
+function randomLayout(points) {
+  points.forEach(function(d) {
     d.x = Math.random() * (width - pointWidth);
     d.y = Math.random() * (height - pointHeight);
   });
   return points;
 }
 
-function toBottom(points){
-  points.forEach(function(d){
+function toBottom(points) {
+  points.forEach(function(d) {
     d.x = Math.random() * (width - pointWidth);
-    d.y = height;
+    d.y = height - pointHeight;
   });
   return points;
 }
