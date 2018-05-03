@@ -32,9 +32,8 @@ function makeViz(error, profiles) {
   });
 
   // Start in center
-  toCenter(points);
+  toBottom(points);
   draw();
-
   animate(randomLayout);
 
   // Button actions
@@ -43,14 +42,14 @@ function makeViz(error, profiles) {
 
   d3.select("#age")
     .on("click", _ => {
-      animate(toCenter);
+      animate(toBottom);
       setTimeout(x => showAgeDist(), 1500);
     });
   /* >>>>>>>>>>>>>> ====== BEGIN utility functions ======= <<<<<<<<<<<<<<<<<<< */
 
   // draw the points based on their current layout
   function draw() {
-    const ctx = canvas.node().getContext('2d');
+    ctx = canvas.node().getContext('2d');
     ctx.save();
 
     // erase what is on the canvas currently
@@ -95,10 +94,9 @@ function makeViz(error, profiles) {
   }
 
   function showAgeDist(){
-    const ctx = canvas.node().getContext('2d');
-    // ctx.save();
+    ctx = canvas.node().getContext('2d');
+    ctx.save();
     // erase what is on the canvas currently
-    console.log("Hello");
     ctx.clearRect(0, 0, width, height);
 
     age = new Array(100).fill(0);
@@ -162,10 +160,10 @@ function randomLayout(points){
   return points;
 }
 
-function toCenter(points){
+function toBottom(points){
   points.forEach(function(d){
-    d.x = width/2;
-    d.y = height/2
+    d.x = Math.random() * (width - pointWidth);
+    d.y = height;
   });
   return points;
 }
