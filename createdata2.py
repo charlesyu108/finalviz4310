@@ -132,17 +132,56 @@ for essay in essays:
 	for rotato in male_only:
 		male_only_dict[rotato] = male_dict[rotato]
 
-	sorted_top_f = sorted(female_only_dict.items(), key=operator.itemgetter(1), reverse=True)
+
+	# working hard example bigram
+	bigram_set = set([])
+	for key, value in shared_dict.items():
+		if len(key.split(" ")) == 2:
+			arr = key.split(" ")
+			bigram_set.add(arr[0])
+			bigram_set.add(arr[1])
+
+	for key, value in female_only_dict.items():
+		if len(key.split(" ")) == 2:
+			arr = key.split(" ")
+			bigram_set.add(arr[0])
+			bigram_set.add(arr[1])
+
+	for key, value in male_only_dict.items():
+		if len(key.split(" ")) == 2:
+			arr = key.split(" ")
+			bigram_set.add(arr[0])
+			bigram_set.add(arr[1])
+
+	shared_dictnobigrams = {}
+	for key, value in shared_dict.items():
+		if key not in bigram_set:
+			shared_dictnobigrams[key] = value
+
+	female_only_dictnobigrams = {}
+	for key, value in female_only_dict.items():
+		if key not in bigram_set:
+			female_only_dictnobigrams[key] = value
+
+	male_only_dictnobigrams = {}
+	for key, value in male_only_dict.items():
+		if key not in bigram_set:
+			male_only_dictnobigrams[key] = value
+
+
+
+
+	sorted_top_f = sorted(female_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
 	sorted_top_fdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_f]
 	# sorted_f_word = [x[0] for x in sorted_top_f]
 	# sorted_f_count = [x[1] for x in sorted_top_f]
 	
-	sorted_top_m = sorted(male_only_dict.items(), key=operator.itemgetter(1), reverse=True)
+	sorted_top_m = sorted(male_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
 	sorted_top_mdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_m]
 	# sorted_m_word = [x[0] for x in sorted_top_m]
 	# sorted_m_count = [x[1] for x in sorted_top_m]
 	
-	sorted_top_both = sorted(shared_dict.items(), key=operator.itemgetter(1), reverse=True)
+	sorted_top_both = sorted(shared_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
 	sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'mcount': male_dict[x[0]]} for x in sorted_top_both]
 	# sorted_both_word = [x[0] for x in sorted_top_both]
 	# sorted_both_count = [x[1] for x in sorted_top_both]
