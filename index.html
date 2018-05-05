@@ -30,213 +30,69 @@
 
 <script src="demographics.js"></script>
 
-<!-- <script>
-  //Loading in Data
-  d3.queue()
-    .defer(d3.csv, "profiles.csv")
-    .defer(d3.json, "okcupid.json")
-    .await(makeViz);
-
-  function makeViz(err, data, jsondata) {
-    console.log("Data Loaded!", data.length);
-
-    var sampleData = {
-      "children": [{
-          "text": "hello",
-          "count": 20
-        },
-        {
-          "text": "artsy",
-          "count": 200
-        },
-        {
-          "text": "adventurous",
-          "count": 145
-        },
-        {
-          "text": "love",
-          "count": 305
-        },
-        {
-          "text": "harry potter",
-          "count": 30
-        },
-        {
-          "text": "game of thrones",
-          "count": 13
-        },
-        {
-          "text": "san francisco",
-          "count": 155
-        },
-        {
-          "text": "fun",
-          "count": 300
-        },
-        {
-          "text": "amp",
-          "count": 70
-        },
-
-      ]
-    }
-    var essayq = "essay6";
-
-    var gender = "f";
-    // var essayq = "essay0";
-    var jData = jsondata.filter( d => (d.gender == gender && d.essay == essayq))[0];
-    // jData.top_word = jData.top_word.slice(100, 200);
-    console.log(jData);
-    sampleData1 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
-    femaletext = sampleData1.children.map(d => d.text);
-
-    var gender = "m";
-    // var essayq = "essay0";
-    var jData = jsondata.filter( d => (d.gender == gender && d.essay == essayq))[0];
-    // jData.top_word = jData.top_word.slice(100, 200);
-    console.log(jData);
-    sampleData2 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
-    maletext = sampleData2.children.map(d => d.text);
-
-    sampleData =  {"children": sampleData1.children.concat(sampleData2.children)};
-
-    console.log(sampleData);
-    console.log("shared", maletext.filter(d => femaletext.indexOf(d) > -1));
-    console.log("male-only", maletext.filter(d => femaletext.indexOf(d) == -1));
-    console.log("female-only", femaletext.filter(d => maletext.indexOf(d) == -1));
-
-
-
-
-    //NOTE!: The "children" field is very important to include!
-
-    var bubble_svg = d3.select("#bubble-svg"),
-      width = +bubble_svg.attr("width"),
-      height = +bubble_svg.attr("height");
-
-    var color = d3.scaleOrdinal(d3.schemeCategory20);
-
-    var bubble = d3.pack(sampleData)
-      .size([width/2, height])
-      .padding(1.5);
-
-    var bubble_tooltip = d3.select("body").append("div")
-      .style("position", "absolute")
-      .html("test");
-
-    var nodes = d3.hierarchy(sampleData)
-      .sum(d => d.count);
-
-    var node = bubble_svg.selectAll(".node")
-      .data(bubble(nodes).descendants())
-      .enter()
-      .filter(d => !d.children)
-      .append("g")
-      .attr("class", "node")
-      .attr("transform", d => "translate(" + d.x + "," + d.y + ")");
-
-    node.append("title")
-      .text(d => d.data.text);
-
-    node.append("circle")
-      .attr("r", d => d.r)
-      .style("fill", (d, i) => (d.data.gender =="f" ? "red": "blue"));
-
-    node.append("text")
-      .attr("dy", ".2em")
-      .attr("font-family", "sans-serif")
-      .attr("text-anchor", "middle")
-      .attr("font-size", (d => d.r / 5))
-      .attr("fill", "white")
-      .text(d => d.data.text)
-
-    // Overlayed, transparent circle
-    node.append("circle")
-      .attr("class", "overlay")
-      .attr("r", d => d.r)
-      .style("opacity", 0)
-      .on("mouseover", showToolTip)
-      .on("mousemove", moveToolTip)
-      .on("mouseout", hideToolTip);
-
-    function moveToolTip(){
-      bubble_tooltip
-      .style("top", 12 + d3.event.pageY +"px")
-      .style("left", 12 + d3.event.pageX+"px");
-    }
-
-    function showToolTip(){
-      bubble_tooltip
-      .style("display", "inline")
-    }
-
-    function hideToolTip(){
-      bubble_tooltip
-      .style("display", "none");
-    }
-  }
-
-  //Bubble viz credit: https://bl.ocks.org/alokkshukla/3d6be4be0ef9f6977ec6718b2916d168
-</script> -->
-
 <script>
 
-var width = 1000,
+var width = 1100,
     height =550,
     padding = 1.5, // separation between same-color nodes
     clusterPadding = 6, // separation between different-color nodes
-    maxRadius = 25;
+    maxRadius = 50;
 
 var n = 200, // total number of nodes
     m = 2; // number of distinct clusters
 
 var clusters = new Array(m);
 
-d3.json("okcupid.json", function(error, data) {
+d3.json("potato3.json", function(error, data) {
   if (error) throw error;
 
-  var essayq = "essay0";
+  var essayq = "essay4";
 
   nodes = [];
 
-  var gender = "f";
-  var jData = data.filter( d => (d.gender == gender && d.essay == essayq))[0];
-  jData.top_word = jData.top_word.slice(100, 200);
-  sampleData1 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+  var gender = "female";
+  var jData = data.filter( d => (d.essay == essayq))[0];
+  top_female = jData.female.slice(50, 150);
+  sampleData1 = {"children": top_female.map(function (d){ return  {"text": d.word, "count": d.count, "gender": "f"} }) };
   femaletext = sampleData1.children.map(d => d.text);
 
-  var gender = "m";
-  var jData = data.filter( d => (d.gender == gender && d.essay == essayq))[0];
-  jData.top_word = jData.top_word.slice(100, 200);
-  sampleData2 = {"children": jData.top_word.map(function (d){ return  {"text": d[0], "count": d[1], "gender": gender} }) };
+  var gender = "male";
+  var jData = data.filter( d => (d.essay == essayq))[0];
+  top_male = jData.male.slice(50, 150);
+  sampleData2 = {"children": top_male.map(function (d){ return  {"text": d.word, "count": d.count, "gender": "m"} }) };
   maletext = sampleData2.children.map(d => d.text);
 
   sampleData =  {"children": sampleData1.children.concat(sampleData2.children)};
 
-  var sharedText = maletext.filter(d => femaletext.indexOf(d) > -1);
-  var maleData = sampleData2.children.filter(d => sharedText.indexOf(d.text) == -1)
-  var femaleData = sampleData1.children.filter(d => sharedText.indexOf(d.text) == -1)
-  var sharedData = sampleData1.children.filter(d => sharedText.indexOf(d.text) > -1)
+  var gender = "both";
+  var jData = data.filter( d => (d.essay == essayq))[0];
+  top_both = jData.both.slice(100, 200);
+  sampleData3 = {"children": top_both.map(function (d){ return  {"text": d.word, "count": d.count, "gender": "s"} }) };
+  var sharedText = sampleData3.children.map(d => d.text);
+
+  var maleData = sampleData2.children.filter(d => sharedText.indexOf(d.text) == -1);
+  var femaleData = sampleData1.children.filter(d => sharedText.indexOf(d.text) == -1);
+  var sharedData = sampleData3.children;
+
   sharedText = sharedText.slice(0,30);
   console.log("shared: "+JSON.stringify(sharedData));
   console.log("male: "+JSON.stringify(maleData));
   console.log("female: "+JSON.stringify(femaleData));
-
-  console.log(sampleData.children);
   //console.log("male-only", maletext.filter(d => femaletext.indexOf(d) == -1));
   //console.log("female-only", femaletext.filter(d => maletext.indexOf(d) == -1));
 
   sampleData.children.forEach(function(point) {
       var i = getCluster(point);
       var col = getColor(point);
-      var r = 3*(point.text.length);
+      var r = getRadius(point.count.toFixed(0));
       var d = {
             cluster: i,
             radius: r,
-            x: getX(i) + Math.random(),
-            y: height + Math.random(),
+            x: getX(i),
+            y: (height/2) * Math.random(),
             color: col,
-            text: point.text
+            text: point.text,
+            count: point.count
           };
       if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
       nodes.push(d);
@@ -272,22 +128,24 @@ d3.json("okcupid.json", function(error, data) {
   }
 
   function getRadius(d) {
-    return d/60;
+    return d/7;
   }
 
   function getX(i) {
     if(i==0) {
-      return (-width/3)
+      return getRandom(-width*2, -width/2)
     }
     else if(i==1) {
-      return (-20)
+      return getRandom(-width, -width/3)
     }
     else {
-      return (width/3)
+      return getRandom(width/7, width/6)
     }
   }
 
-  console.log(nodes);
+  function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+  }
 
   var force = d3.forceSimulation()
     // keep entire simulation balanced around screen center
@@ -299,7 +157,7 @@ d3.json("okcupid.json", function(error, data) {
 
     // apply collision with padding
     .force('collide', d3.forceCollide(d => d.radius + padding)
-      .strength(0.8))
+      .strength(0.5))
 
     .on('tick', layoutTick)
     .nodes(nodes);
@@ -326,20 +184,16 @@ d3.json("okcupid.json", function(error, data) {
               .style("text-anchor", "middle")
               .style("fill", "#111")
               .style("font-family", "Arial")
-              .style("font-size", 12)/*function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })*/
+              .style("font-size", 12)
+             /* .style("font-size",function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })*/
               .on("mouseover", function(d) {
                 d3.select(this).style("cursor", "pointer"); 
               });
 
-  d3plus.textwrap()
-    .container(d3.select(".circleResize"))
-    .resize(true)
-    .draw();
-
   function layoutTick(e) {
     node
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
+        .attr("cx", function(d) { return d.x = Math.max(d.radius, Math.min(width - d.radius, d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(d.radius, Math.min(height - d.radius, d.y)); })
         .attr("r", function(d) { return d.radius; });
     label
         .attr("x", function(d) { return d.x} )
