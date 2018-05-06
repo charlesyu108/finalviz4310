@@ -48,48 +48,94 @@ function makeViz(error, profiles) {
   // Init points
   points.forEach(function(d) {
     d.color = d.sex == "m" ? "blue" : "red";
-    d.visible = "visible";
+    d.display = "visible";
   });
 
   // Start points at bottom of screen
   toBottom(points);
-  draw();
-  animate(randomLayout);
+  drawPoints();
+  animatePoints(randomLayout);
 
   svg.on("mousemove", mousemoveActions);
 
   // Button actions
   d3.select("#gender")
     .on("click", _ => {
-      animate(genderLayout);
+      animatePoints(genderLayout);
       genderLayoutSVG(points);
     });
 
   d3.select("#unsort")
-    .on("click", _ => animate(randomLayout));
+    .on("click", _ => animatePoints(randomLayout));
 
   d3.select("#age")
     .on("click", _ => {
-      animate(randomLayout);
+      animatePoints(randomLayout);
       setTimeout( _ => {
-        animate(toBottom);
-        setTimeout(x => {pointsInvisible(); clearSVG(); showAgeDist()}, 1500);
+        animatePoints(toBottom);
+        setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
       },1500)
 
     });
 
   d3.select("#orientation")
     .on("click", _ => {
-      animate(randomLayout);
+      animatePoints(randomLayout);
       setTimeout( _ => {
-        animate(toBottom);
-        setTimeout(_ => {pointsInvisible(); clearSVG(); showOrientationDist()}, 1500);
+        animatePoints(toBottom);
+        setTimeout(_ => {pointsOff(); clearSVG(); showOrientationDist()}, 1500);
       },1500)
 
     });
-  /* >>>>>>>>>>>>>> ====== BEGIN utility functions ======= <<<<<<<<<<<<<<<<<<< */
 
-  
+  // Making filters
+  var filters = [["sex", "m"], ["sex", "f"], ["religion", "christianity"], ["religion", "islam"]]
+
+  function onCheckboxChange(){
+    filts = [];
+    boxes = document.querySelectorAll(".profile-filter");
+    Array.from(boxes).forEach(d => {
+      box = d3.select(d);
+      if (box.property("checked")){
+         filts.push(pointsFilter(box.attr("field"), box.attr("value")))
+       }
+     });
+
+   filterPoints(filts);
+   drawPoints();
+
+  }
+
+  filters.forEach(d => {
+    var div = d3.select("#filters").append("div");
+
+    div.append("input")
+    .attr("type", "checkbox")
+    .attr("class", "profile-filter")
+    .attr("id", (d[0]+"-"+d[1]))
+    .attr("field", d[0])
+    .attr("value", d[1])
+    .on("change", onCheckboxChange);
+
+    div.append("label")
+    .attr("for", (d[0]+"-"+d[1]))
+    .html(`${d[0]} (${d[1]})`);
+
+  });
+
+  /* >>>>>>>>>>>>>> ====== BEGIN utility functions ======= <<<<<<<<<<<<<<<<<<< */
+  function filterPoints(filters) {
+    if (filters.length == 0){
+      points.forEach(pt => pt.display = "visible");
+      return;
+    }
+    var filtFn = filters.reduce((a,b) => (x => a(x) && b(x)));
+    points.forEach(pt => filtFn(pt) ? pt.display = "visible": pt.display = "invisible")
+  }
+
+  function pointsFilter(field, val) {
+    return (d => d[field] == val);
+  }
 
   function clearSVG() {
     svg.selectAll("g").remove();
@@ -107,6 +153,7 @@ function makeViz(error, profiles) {
 
     var xpt = d3.event.pageX - demodivDOM.left;
     var ypt = d3.event.pageY - demodivDOM.top;
+
     filt = points.filter(pt =>
       (pt.x >= xpt-pointWidth)&&
       (pt.x <= xpt+pointWidth)&&
@@ -114,6 +161,7 @@ function makeViz(error, profiles) {
       (pt.y <= ypt+pointHeight)&&
       (pt.display == "visible")
     );
+
     if (filt.length > 0){
       var select = filt[0];
       demotooltip
@@ -127,18 +175,18 @@ function makeViz(error, profiles) {
     }
   }
 
-  function pointsVisible(){
+  function pointsOn(){
     points.forEach(pt => pt.display = "visible");
     pointsOnScreen = true;
   }
 
-  function pointsInvisible(){
+  function pointsOff(){
     points.forEach(pt => pt.display = "invisible");
     pointsOnScreen = false;
   }
 
   // draw the points based on their current layout
-  function draw() {
+  function drawPoints() {
     ctx = canvas.node().getContext('2d');
     ctx.save();
 
@@ -148,15 +196,19 @@ function makeViz(error, profiles) {
     // draw each point as a rectangle
     for (let i = 0; i < points.length; ++i) {
       point = points[i];
-      ctx.fillStyle = point.color;
-      ctx.fillRect(point.x, point.y, pointWidth, pointHeight);
+      if (point.display == "visible"){
+        ctx.fillStyle = point.color;
+        ctx.fillRect(point.x, point.y, pointWidth, pointHeight);
+      }
+      // ctx.fillStyle = point.color;
+      // ctx.fillRect(point.x, point.y, pointWidth, pointHeight);
     }
     ctx.restore();
   }
 
-  function animate(newLayout) {
+  function animatePoints(newLayout) {
     clearSVG();
-    pointsVisible();
+    pointsOn();
     // Setting souce points
     points.forEach(point => {
       point.sx = point.x;
@@ -177,7 +229,7 @@ function makeViz(error, profiles) {
         point.x = point.sx * (1 - t) + point.tx * t;
         point.y = point.sy * (1 - t) + point.ty * t;
       });
-      draw(); // update what is drawn on screen
+      drawPoints(); // update what is drawn on screen
       // if this animation is over, stop this timer since we are done animating.
       if (t >= 1) {
         timer.stop();
