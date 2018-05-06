@@ -2,8 +2,16 @@ svg {
   border: 1px solid blue;
 }
 
-canvas {
-    border:1px solid blue;
+.demotooltip {
+  position: absolute;
+  text-align: center;
+  min-width: 60px;
+  min-height: 100px;
+  padding: 8px;
+  margin-top: -20px;
+  font: 10px sans-serif;
+  background: #ddd;
+  pointer-events: none;
 }
 
 .jumbotron {
