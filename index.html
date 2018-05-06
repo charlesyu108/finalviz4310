@@ -22,11 +22,13 @@
 
 <body>
   <h1>INFO 4310 Final Project</h1>
-  <div id="demographics-div" style="position:relative"> </div>
-  <button id= "unsort">Unsort</button>
+  <div id="demographics-div" style="position:relative">
+  </div>
+  <button id= "unsort">See Profiles</button>
   <button id="gender">Show Gender</button>
   <button id="age">Show Age</button>
   <button id="orientation"> Show Orientations </button>
+  <div id="bubbles"> </div>
 </body>
 
 
@@ -163,7 +165,7 @@ d3.json("potato6.json", function(error, data) {
     .on('tick', layoutTick)
     .nodes(nodes);
 
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("#bubbles").append("svg")
       .attr("width", width)
       .attr("height", height);
 
