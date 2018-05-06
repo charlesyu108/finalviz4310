@@ -30,7 +30,7 @@
   <button id="gender">Show Gender</button>
   <button id="age">Show Age</button>
   <button id="orientation"> Show Orientations </button>
-  <div id="bubbles"> </div>
+  <div id="bubbles"></div> <div id="bubbleText" style="width:100%;height:500px;overflow:auto;"></div> 
 
 </body>
 
@@ -39,7 +39,7 @@
 
 <script>
 
-var width = 1200,
+var width = 1000,
     height =550,
     padding = 1.5, // separation between same-color nodes
     clusterPadding = 6, // separation between different-color nodes
@@ -191,13 +191,29 @@ d3.json("potato6.json", function(error, data) {
               });
 
   function displayText(word) {
-    var essays = [];
+    document.getElementById("bubbleText").innerHTML = "";
+    var first_essays = [];
     d3.csv("essays.csv", function(csv) {
       csv.map(function(row) {
-        essays.push(row.essay4);
+        if(row.essay4.search(word+" ") != -1) {
+          first_essays.push(row.essay4);
+        }
       })
 
-      console.log(essays);
+      var essays = [];
+      for (var i = 0; i < 20; i++) {
+          essays.push(first_essays[Math.floor(Math.random()*first_essays.length)]);
+      }
+
+      var container = document.getElementById("bubbleText");
+      for (var item in essays.slice(0,20)) {
+          var startInd = essays[item].search(word);
+          var finalStr = essays[item].slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + essays[item].slice(startInd+word.length);
+          var paragraph = document.createElement("p");
+          paragraph.setAttribute("style", "border: 1px solid black;");
+          paragraph.innerHTML = finalStr;
+          container.appendChild(paragraph);
+      }
     })
   }
 
