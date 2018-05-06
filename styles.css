@@ -1,7 +1,19 @@
 svg {
-  border: 1px solid black;
+  border: 1px solid blue;
 }
 
 canvas {
-    border:1px solid #ccc;
+    border:1px solid blue;
 }
+
+.jumbotron {
+	font-family: 'Fira Mono', monospace;
+	padding-top: 100px;
+}
+
+.display-5 {
+	font-weight: bold;
+}
+
+
+
