@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text 
 from nltk.tokenize import TweetTokenizer
+from nltk import FreqDist,pos_tag
 
 import operator
 import json
@@ -62,7 +63,21 @@ english_plus.add('[')
 english_plus.add(']')
 english_plus.add('{')
 english_plus.add('}')
-
+english_plus.add('<')
+english_plus.add('>')
+english_plus.add('br')
+english_plus.add("i'm")
+english_plus.add("i'll")
+english_plus.add("it's")
+english_plus.add("i've")
+english_plus.add("+")
+english_plus.add("i'd")
+english_plus.add("you're")
+english_plus.add("let's")
+english_plus.add("don't")
+english_plus.add("actually")
+english_plus.add("2")
+english_plus.add("there's")
 
 
 # json_both = []
@@ -75,15 +90,27 @@ for essay in essays:
 	male_dict = {}
 	pattern = "(?u)\\b[\\w-]+\\b"
 	cvect = TfidfVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, tokenizer=tweettokenizer.tokenize, ngram_range=(1,2))
-	# females
+	
+	# adjectives, adverbs only
+	# essays_pos_tagged= [pos_tag(tweettokenizer.tokenize(m)) for m in df[df.sex == 'f'][essay].values.astype('U')]
+	# reviews_adj_adv_only=[" ".join([w for w,tag in m if tag in ["JJ","RB","RBS","RBJ","JJR","JJS"]])
+	# 						  for m in essays_pos_tagged]
+
+	# Females
 	counts = cvect.fit_transform(df[df.sex == 'f'][essay].values.astype('U'))
+	# counts = cvect.fit_transform(reviews_adj_adv_only)
 	counts_sum = (counts.toarray().sum(axis=0)).tolist()
 	cvect_dict = cvect.vocabulary_ #ohh these are just indexes cuz vector is always the same cuz vector space model
 	for word, word_index in cvect_dict.items():
 		female_dict[word] = counts_sum[word_index]
 
-	# Females
+	# # Males
+	# essays_pos_tagged= [pos_tag(tweettokenizer.tokenize(m)) for m in df[df.sex == 'm'][essay].values.astype('U')]
+	# reviews_adj_adv_only=[" ".join([w for w,tag in m if tag in ["JJ","RB","RBS","RBJ","JJR","JJS"]])
+	# 						  for m in essays_pos_tagged]
+
 	counts = cvect.fit_transform(df[df.sex == 'm'][essay].values.astype('U'))
+	# counts = cvect.fit_transform(reviews_adj_adv_only)
 	counts_sum = (counts.toarray().sum(axis=0)).tolist()
 	cvect_dict = cvect.vocabulary_ #ohh these are just indexes cuz vector is always the same cuz vector space model
 	for word, word_index in cvect_dict.items():
@@ -94,17 +121,67 @@ for essay in essays:
 	for common_word in male_intersect_female:
 		shared_dict[common_word] = male_dict[common_word] + female_dict[common_word]
 
-	sorted_top_f = sorted(female_dict.items(), key=operator.itemgetter(1), reverse=True)
+	female_only = set(female_dict.keys()) - set(shared_dict.keys())
+	male_only = set(male_dict.keys()) - set(shared_dict.keys())
+
+	female_only_dict = {}
+	for potato in female_only:
+		female_only_dict[potato] = female_dict[potato]
+
+	male_only_dict = {}
+	for rotato in male_only:
+		male_only_dict[rotato] = male_dict[rotato]
+
+
+	# working hard example bigram
+	bigram_set = set([])
+	for key, value in shared_dict.items():
+		if len(key.split(" ")) == 2:
+			arr = key.split(" ")
+			bigram_set.add(arr[0])
+			bigram_set.add(arr[1])
+
+	for key, value in female_only_dict.items():
+		if len(key.split(" ")) == 2:
+			arr = key.split(" ")
+			bigram_set.add(arr[0])
+			bigram_set.add(arr[1])
+
+	for key, value in male_only_dict.items():
+		if len(key.split(" ")) == 2:
+			arr = key.split(" ")
+			bigram_set.add(arr[0])
+			bigram_set.add(arr[1])
+
+	shared_dictnobigrams = {}
+	for key, value in shared_dict.items():
+		if key not in bigram_set:
+			shared_dictnobigrams[key] = value
+
+	female_only_dictnobigrams = {}
+	for key, value in female_only_dict.items():
+		if key not in bigram_set:
+			female_only_dictnobigrams[key] = value
+
+	male_only_dictnobigrams = {}
+	for key, value in male_only_dict.items():
+		if key not in bigram_set:
+			male_only_dictnobigrams[key] = value
+
+
+
+
+	sorted_top_f = sorted(female_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
 	sorted_top_fdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_f]
 	# sorted_f_word = [x[0] for x in sorted_top_f]
 	# sorted_f_count = [x[1] for x in sorted_top_f]
 	
-	sorted_top_m = sorted(male_dict.items(), key=operator.itemgetter(1), reverse=True)
+	sorted_top_m = sorted(male_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
 	sorted_top_mdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_m]
 	# sorted_m_word = [x[0] for x in sorted_top_m]
 	# sorted_m_count = [x[1] for x in sorted_top_m]
 	
-	sorted_top_both = sorted(shared_dict.items(), key=operator.itemgetter(1), reverse=True)
+	sorted_top_both = sorted(shared_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
 	sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'mcount': male_dict[x[0]]} for x in sorted_top_both]
 	# sorted_both_word = [x[0] for x in sorted_top_both]
 	# sorted_both_count = [x[1] for x in sorted_top_both]
@@ -114,7 +191,7 @@ for essay in essays:
 	json_array.append(meep)
 
 
-with open('potato5.json', 'w') as outfile:
+with open('potato6.json', 'w') as outfile:
 
 	json.dump(json_array, outfile, indent=4)
 
