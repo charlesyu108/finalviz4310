@@ -33,7 +33,7 @@ var svg = d3.select('#demographics-div')
       .style("left", canvasDOM.left-demodivDOM.left);
 
 var demotooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
+    .attr("class", "demotooltip")
     .style("display", "none");
 
 // Load in Profiles data
@@ -73,7 +73,7 @@ function makeViz(error, profiles) {
       animate(randomLayout);
       setTimeout( _ => {
         animate(toBottom);
-        setTimeout(x => {pointsInvisible(); showAgeDist()}, 1500);
+        setTimeout(x => {pointsInvisible(); clearSVG(); showAgeDist()}, 1500);
       },1500)
 
     });
@@ -83,14 +83,26 @@ function makeViz(error, profiles) {
       animate(randomLayout);
       setTimeout( _ => {
         animate(toBottom);
-        setTimeout(_ => {pointsInvisible(); showOrientationDist()}, 1500);
+        setTimeout(_ => {pointsInvisible(); clearSVG(); showOrientationDist()}, 1500);
       },1500)
 
     });
   /* >>>>>>>>>>>>>> ====== BEGIN utility functions ======= <<<<<<<<<<<<<<<<<<< */
 
-  function mousemoveActions() {
+  
 
+  function clearSVG() {
+    svg.selectAll("g").remove();
+  }
+
+  function clearCanvas() {
+    ctx = canvas.node().getContext('2d');
+    ctx.save();
+    ctx.clearRect(0, 0, demo_width, demo_height);
+    ctx.restore();
+  }
+
+  function mousemoveActions() {
     if (!pointsOnScreen) return;
 
     var xpt = d3.event.pageX - demodivDOM.left;
@@ -143,7 +155,7 @@ function makeViz(error, profiles) {
   }
 
   function animate(newLayout) {
-    svg.selectAll("g").remove();
+    clearSVG();
     pointsVisible();
     // Setting souce points
     points.forEach(point => {
