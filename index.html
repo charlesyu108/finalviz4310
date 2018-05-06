@@ -48,7 +48,7 @@ var clusters = new Array(m);
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
 
-  var essayq = "essay1";
+  var essayq = "essay4";
 
   nodes = [];
 
@@ -74,10 +74,6 @@ d3.json("potato6.json", function(error, data) {
   var femaleData = sampleData1.children; //.filter(d => sharedText.indexOf(d.text) == -1);
   var sharedData = sampleData3.children;
 
-  console.log("shared: "+JSON.stringify(sharedData));
-  console.log("male: "+JSON.stringify(maleData));
-  console.log("female: "+JSON.stringify(femaleData));
-
   sampleData.children.forEach(function(point) {
       var i = getCluster(point);
       var col = getColor(point);
@@ -93,8 +89,6 @@ d3.json("potato6.json", function(error, data) {
           };
       if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
       nodes.push(d);
-
-
   });
 
   function getColor(point) {
@@ -171,7 +165,7 @@ d3.json("potato6.json", function(error, data) {
       .data(nodes)
     .enter().append("circle")
       .style("fill", function(d) {return d.color})
-      .on("click", function(d) { console.log(d); displayText(d.text)})
+      .on("click", function(d) { displayText(d.text)})
       .on("mouseover", function(d) {
           d3.select(this).style("cursor", "pointer");
         });
@@ -193,7 +187,13 @@ d3.json("potato6.json", function(error, data) {
 
   function displayText(word) {
     var essays = [];
-    
+    d3.csv("essays.csv", function(csv) {
+      csv.map(function(row) {
+        essays.push(row.essay4);
+      })
+
+      console.log(essays);
+    })
   }
 
   function layoutTick(e) {
