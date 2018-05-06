@@ -33,7 +33,7 @@ var svg = d3.select('#demographics-div')
       .style("left", canvasDOM.left-demodivDOM.left);
 
 var demotooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
+    .attr("class", "demotooltip")
     .style("display", "none");
 
 // Load in Profiles data
