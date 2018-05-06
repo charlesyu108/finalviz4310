@@ -30,8 +30,7 @@
   <button id="gender">Show Gender</button>
   <button id="age">Show Age</button>
   <button id="orientation"> Show Orientations </button>
-  <div id="filters"></div>
-  <div id="bubbles"> </div>
+  <div id="bubbles"></div> <div id="bubbleText" style="width:100%;height:500px;overflow:auto;"></div>
 
 </body>
 
@@ -40,7 +39,7 @@
 
 <script>
 
-var width = 1200,
+var width = 1000,
     height =550,
     padding = 1.5, // separation between same-color nodes
     clusterPadding = 6, // separation between different-color nodes
@@ -54,7 +53,7 @@ var clusters = new Array(m);
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
 
-  var essayq = "essay1";
+  var essayq = "essay4";
 
   nodes = [];
 
@@ -80,10 +79,6 @@ d3.json("potato6.json", function(error, data) {
   var femaleData = sampleData1.children; //.filter(d => sharedText.indexOf(d.text) == -1);
   var sharedData = sampleData3.children;
 
-  console.log("shared: "+JSON.stringify(sharedData));
-  console.log("male: "+JSON.stringify(maleData));
-  console.log("female: "+JSON.stringify(femaleData));
-
   sampleData.children.forEach(function(point) {
       var i = getCluster(point);
       var col = getColor(point);
@@ -99,8 +94,6 @@ d3.json("potato6.json", function(error, data) {
           };
       if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
       nodes.push(d);
-
-
   });
 
   function getColor(point) {
@@ -177,7 +170,7 @@ d3.json("potato6.json", function(error, data) {
       .data(nodes)
     .enter().append("circle")
       .style("fill", function(d) {return d.color})
-      .on("click", function(d) { console.log(d); displayText(d.text)})
+      .on("click", function(d) { displayText(d.text)})
       .on("mouseover", function(d) {
           d3.select(this).style("cursor", "pointer");
         });
@@ -198,8 +191,30 @@ d3.json("potato6.json", function(error, data) {
               });
 
   function displayText(word) {
-    var essays = [];
+    document.getElementById("bubbleText").innerHTML = "";
+    var first_essays = [];
+    d3.csv("essays.csv", function(csv) {
+      csv.map(function(row) {
+        if(row.essay4.search(word+" ") != -1) {
+          first_essays.push(row.essay4);
+        }
+      })
 
+      var essays = [];
+      for (var i = 0; i < 20; i++) {
+          essays.push(first_essays[Math.floor(Math.random()*first_essays.length)]);
+      }
+
+      var container = document.getElementById("bubbleText");
+      for (var item in essays.slice(0,20)) {
+          var startInd = essays[item].search(word);
+          var finalStr = essays[item].slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + essays[item].slice(startInd+word.length);
+          var paragraph = document.createElement("p");
+          paragraph.setAttribute("style", "border: 1px solid black;");
+          paragraph.innerHTML = finalStr;
+          container.appendChild(paragraph);
+      }
+    })
   }
 
   function layoutTick(e) {
