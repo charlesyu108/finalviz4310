@@ -160,9 +160,9 @@ function makeViz(error, profiles) {
 
   function mousemoveActions() {
     if (!pointsOnScreen) return;
-
-    var xpt = d3.event.pageX - demodivDOM.left;
-    var ypt = d3.event.pageY - demodivDOM.top;
+    demodivDOM = document.getElementById("demographics-div").getBoundingClientRect();
+    var xpt = d3.event.clientX - demodivDOM.left;
+    var ypt = d3.event.clientY - demodivDOM.top;
 
     filt = points.filter(pt =>
       (pt.x >= xpt-pointWidth)&&
@@ -351,7 +351,6 @@ function makeViz(error, profiles) {
 
     var groupsEnter = viz.selectAll("g")
     .data(groups).enter();
-    console.log(demo_width);
 
     var circles = groupsEnter.append("circle")
       .style("fill", d => d.sex == "m"? "blue": "red")
@@ -410,7 +409,6 @@ function makeViz(error, profiles) {
 
     var groupsEnter = viz.selectAll("g")
     .data(groups).enter();
-    console.log(demo_width);
 
     var circles = groupsEnter.append("circle")
       .style("fill", d => d.sex == "m"? "blue": "red")
@@ -460,23 +458,11 @@ function makeViz(error, profiles) {
  * NOTE: Elements of `points` will have their 'x' and 'y' fields mutated.
  */
 
-// function ageLayout(points) {
-//   //TODO: Fix me!
-//   age = new Array(100).fill(0);
-//   points.forEach(function(d) {
-//     d.x = d.age * pointWidth
-//     d.y = height - age[d.age]
-//     age[d.age] += 1
-//   });
-//
-//   return points;
-// }
-
 function genderLayout(points) {
-  max_x = demo_width / pointWidth / 4;
+  max_x = demo_width / pointWidth / 2;
   max_y = demo_height / pointHeight / 2;
   x = 0;
-  y = 10;
+  y = 0;
 
   male = points.filter(x => x.sex == "m");
   female = points.filter(x => x.sex == "f");
@@ -486,7 +472,7 @@ function genderLayout(points) {
     d.y = 2 * pointHeight * y;
     y += 1;
     if (y > max_y) {
-      y = 10;
+      y = 0;
       x += 1;
     }
   });
@@ -509,6 +495,22 @@ function toBottom(points) {
   return points;
 }
 
+function toGrid(points){
+  max_x = demo_width / pointWidth / 4;
+  max_y = demo_height / pointHeight / 2;
+  x = 0;
+  y = 10;
+  points.forEach(function(d) {
+    d.x = 2 * pointWidth * x;
+    d.y = 2 * pointHeight * y;
+    y += 1;
+    if (y > max_y) {
+      y = 10;
+      x += 1;
+    }
+  });
+  return points;
+}
 
 function toCenter(points) {
   points.forEach(function(d) {
