@@ -4,7 +4,7 @@
  */
 
 // Define Canvas Related params
-const demo_width = 800;
+const demo_width = 1200;
 const demo_height = 600;
 var pointWidth = 2;
 var pointHeight = 2;

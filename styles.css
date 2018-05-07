@@ -1,5 +1,5 @@
 svg {
-  border: 1px solid blue;
+  border: 1px solid white;
 }
 
 .demotooltip {
@@ -16,11 +16,15 @@ svg {
 
 .jumbotron {
 	font-family: 'Fira Mono', monospace;
-	padding-top: 100px;
+	color: gray;
 }
 
 .display-5 {
 	font-weight: bold;
+}
+
+body {
+	color: black;
 }
 
 
