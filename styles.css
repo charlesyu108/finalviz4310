@@ -15,16 +15,36 @@ svg {
 }
 
 .jumbotron {
+  position: static;
 	font-family: 'Fira Mono', monospace;
 	color: white;
+  width: 100%;
 }
 
 .icons-div {
+  position: relative;
   display: inline;
+  top: -45px;
+  left: 675px;
+}
+
+.heart {
+  height: 30px;
+  margin-left: 10px;
+}
+
+.laptop {
+  height: 30px;
 }
 
 .display-5 {
 	font-weight: bold;
+  padding-top: 100px;
+  padding-left: 50px;
+}
+
+.lead {
+  padding-left: 50px;
 }
 
 #demographics-div {
