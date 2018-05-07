@@ -48,6 +48,7 @@ svg {
 #demographics-div {
   float: left;
   position: sticky;
+  top:10px;
   margin-right: 5px;
   margin-left:20px;
 }

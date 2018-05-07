@@ -4,10 +4,9 @@
  */
 
 var bodyDOM = document.body.getBoundingClientRect();
-console.log(bodyDOM);
 // Define Canvas Related params
 const demo_width = bodyDOM.width * 0.40;
-const demo_height = 400;
+const demo_height = 600;
 var pointWidth = 2;
 var pointHeight = 2;
 const duration = 1500;
@@ -77,7 +76,6 @@ function makeViz(error, profiles) {
         animatePoints(toBottom);
         setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
       },1500)
-
     });
 
   d3.select("#orientation")
@@ -369,8 +367,8 @@ function makeViz(error, profiles) {
     .on("mousemove", d => {
       demotooltip
       .style("display", "inline")
-      .style("top", (d3.event.pageY-34)+ "px")
-      .style("left", (d3.event.pageX-12) + "px")
+      .style("top", (d3.event.clientY-34)+ "px")
+      .style("left", (d3.event.clientX-12) + "px")
       .html(`${d.orientation}, ${d.sex} <br> Count: ${d.count}`)
     })
     .on("mouseout", d => {
@@ -427,8 +425,8 @@ function makeViz(error, profiles) {
     .on("mousemove", d => {
       demotooltip
       .style("display", "inline")
-      .style("top", (d3.event.pageY-34)+ "px")
-      .style("left", (d3.event.pageX-12) + "px")
+      .style("top", (d3.event.clientY-34)+ "px")
+      .style("left", (d3.event.clientX-12) + "px")
       .html(`${d.job}, ${d.sex} <br> Count: ${d.count}`)
     })
     .on("mouseout", d => {
@@ -450,6 +448,38 @@ function makeViz(error, profiles) {
         .attr("x", 500)
         .attr("y", demo_height + 20);
   }
+
+  // DEFINE ranges for each content change
+  genderContent = [200, 500]
+  ageContent = [500,800]
+  var lastY = document.documentElement.scrollTop;
+
+  function triggerFn(range, curr) {
+    return (curr > range[0] && curr < range[1] &&
+      !(lastY > range[0] && lastY < range[1]))
+   }
+
+  window.addEventListener("scroll", _ => {
+   var scrolltop = document.documentElement.scrollTop;
+
+   if (triggerFn(genderContent, scrolltop)){
+     animatePoints(genderLayout);
+     genderLayoutSVG(points);
+   }
+
+   if (triggerFn(ageContent, scrolltop)){
+     animatePoints(randomLayout);
+     setTimeout( _ => {
+       animatePoints(toBottom);
+       setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
+     },1500);
+   }
+
+   lastY = scrolltop;
+  })
+
+
+
 } // End of makeViz
 
 
