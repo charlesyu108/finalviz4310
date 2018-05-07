@@ -4,14 +4,12 @@ svg {
 
 .demotooltip {
   position: absolute;
-  text-align: center;
-  min-width: 60px;
-  min-height: 100px;
-  padding: 8px;
+  max-width: 400px;
+  padding: 2px;
   margin-top: -20px;
-  font: 10px sans-serif;
-  background: #ddd;
   pointer-events: none;
+  background-color: lightblue;
+  opacity:0.6;
 }
 
 .jumbotron {
@@ -28,12 +26,23 @@ svg {
 }
 
 #demographics-div {
-  position: fixed;
+  float: left;
+  position: sticky;
+  margin-right: 5px;
+  margin-left:20px;
+}
+
+#content{
+  padding-right: 5%;
+  padding-left: 5px;
+  float: right;
+  width: 55%;
+}
+
+canvas{
+  border: 3px solid black;
 }
 
 body {
 	color: black;
 }
-
-
-

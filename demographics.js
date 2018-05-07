@@ -3,9 +3,11 @@
  * Some of this code is borrowed from https://bl.ocks.org/pbeshai/65420c8d722cdbb0600b276c3adcc6e8.
  */
 
+var bodyDOM = document.body.getBoundingClientRect();
+console.log(bodyDOM);
 // Define Canvas Related params
-const demo_width = 1200;
-const demo_height = 600;
+const demo_width = bodyDOM.width * 0.40;
+const demo_height = 400;
 var pointWidth = 2;
 var pointHeight = 2;
 const duration = 1500;
