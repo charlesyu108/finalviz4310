@@ -1,27 +1,68 @@
 svg {
-  border: 1px solid blue;
+  border: 1px solid white;
 }
 
 .demotooltip {
   position: absolute;
-  text-align: center;
-  min-width: 60px;
-  min-height: 100px;
-  padding: 8px;
+  max-width: 400px;
+  padding: 2px;
   margin-top: -20px;
-  font: 10px sans-serif;
-  background: #ddd;
   pointer-events: none;
+  background-color: lightblue;
+  opacity:0.6;
 }
 
 .jumbotron {
+  position: static;
 	font-family: 'Fira Mono', monospace;
-	padding-top: 100px;
+	color: white;
+  width: 100%;
+}
+
+.icons-div {
+  position: relative;
+  display: inline;
+  top: -45px;
+  left: 675px;
+}
+
+.heart {
+  height: 30px;
+  margin-left: 10px;
+}
+
+.laptop {
+  height: 30px;
 }
 
 .display-5 {
 	font-weight: bold;
+  padding-top: 100px;
+  padding-left: 50px;
 }
 
+.lead {
+  padding-left: 50px;
+}
 
+#demographics-div {
+  float: left;
+  position: sticky;
+  margin-right: 5px;
+  margin-left:20px;
+}
 
+#content{
+  padding-right: 5%;
+  padding-left: 5px;
+  float: right;
+  width: 55%;
+}
+
+canvas{
+  border: 3px solid black;
+}
+
+body {
+	color: black;
+}
