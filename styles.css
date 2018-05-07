@@ -16,11 +16,19 @@ svg {
 
 .jumbotron {
 	font-family: 'Fira Mono', monospace;
-	color: gray;
+	color: white;
+}
+
+.icons-div {
+  display: inline;
 }
 
 .display-5 {
 	font-weight: bold;
+}
+
+#demographics-div {
+  position: fixed;
 }
 
 body {
