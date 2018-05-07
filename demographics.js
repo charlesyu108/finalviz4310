@@ -4,7 +4,7 @@
  */
 
 // Define Canvas Related params
-const demo_width = 800;
+const demo_width = 1200;
 const demo_height = 600;
 var pointWidth = 2;
 var pointHeight = 2;
@@ -47,7 +47,7 @@ function makeViz(error, profiles) {
 
   // Init points
   points.forEach(function(d) {
-    d.color = d.sex == "m" ? "blue" : "red";
+    d.color = d.sex == "m" ? "#70C1ED" : "#FF6D6F";
     d.visible = "visible";
   });
 
