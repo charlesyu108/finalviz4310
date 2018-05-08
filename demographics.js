@@ -441,8 +441,8 @@ function makeViz(error, profiles) {
   }
 
   // BEGIN On scroll interaction
-  contentDiv = document.getElementById("content").getBoundingClientRect();
-  lastContentAnchor = contentDiv.offsetTop + contentDiv.height - demo_height;
+  // contentDiv = document.getElementById("content").getBoundingClientRect();
+  // lastContentAnchor = contentDiv.offsetTop + contentDiv.height - demo_height;
 
   section_to_bounds = [];
   padding = 200;
@@ -485,10 +485,6 @@ function makeViz(error, profiles) {
     if (triggerFn("gender-section", scrolltop)) {
       animatePoints(genderLayout);
       genderLayoutSVG(points);
-
-      d3.select("#demographics-div")
-      .style("position", "absolute")
-      .style("top", lastContentAnchor +"px");
     }
 
     // AGE
