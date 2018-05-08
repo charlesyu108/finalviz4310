@@ -1,32 +1,35 @@
 svg {
-  border: 1px solid white;
+/*  border: 1px solid white;*/
+}
+
+canvas{
+/*  border: 3px solid black;*/
+margin-left: 50px;
 }
 
 .demotooltip {
   position: absolute;
   max-width: 400px;
-  padding: 2px;
+  padding: 10px;
   margin-top: -20px;
   pointer-events: none;
-  background-color: lightblue;
-  opacity: 0.6;
+  background-color: dimgray;
+  color: white;
+  font-family: "Helvetica Neue";
+  opacity: 0.8;
 }
 
 .jumbotron {
   position: static;
 	font-family: 'Fira Mono', monospace;
-	color: gray;
-  width: 100%;
-  background-image: url('his-hers.jpg');
-  background-size: 1425px;
-  background-repeat: no-repeat;
-/*  background-position: 10% 50%;*/
+	color: #1f1f1f;
+  background-color: #dbdf4b !important;
 }
 
 .icons-div {
   display: inline;
   position: relative;
-  top: -295px;
+  top: -150px;
   left: 675px;
 }
 
@@ -41,13 +44,13 @@ svg {
 
 .display-5 {
 	font-weight: bold;
-  padding-top: 250px;
+  padding-top: 150px;
   padding-left: 50px;
 }
 
 .lead {
   padding-left: 50px;
-  padding-bottom: 200px;
+  padding-bottom: 50px;
   padding-top: 0px;
 }
 
@@ -56,7 +59,8 @@ svg {
   position: sticky;
   top:100px;
   margin-right: 5px;
-  margin-left:20px;
+  margin-left:50px;
+  margin-top: 100px;
 }
 
 #content{
@@ -64,16 +68,21 @@ svg {
   padding-left: 5px;
   float: right;
   width: 35%;
+  margin-top: 100px;
+  margin-right: 50px;
 }
 
 h2 {
   font-family: 'Fira Mono', monospace;
 }
 
-canvas{
-  border: 3px solid black;
+.intro-text, .age-text,
+.so-text, .job-text, .gender-text {
+  font-family: 'Fira Mono', monospace;
+  font-weight: lighter;
 }
 
 body {
 	color: black;
+  background-color: #1f1f1f;
 }

@@ -46,9 +46,11 @@ function makeViz(error, profiles) {
   const points = profiles;
   var pointsOnScreen = true;
 
+  var blue = "#61D6FF";
+  var pink = "#FC6C6E";
   // Init points
   points.forEach(function(d) {
-    d.color = d.sex == "m" ? "blue" : "red";
+    d.color = d.sex == "m" ? blue : pink;
     d.display = "visible";
   });
 
@@ -290,8 +292,8 @@ function makeViz(error, profiles) {
       .transition().duration(1000)
         .attr("y", d => y_scale(d.m))
         .attr("height", d => d.m * heightUnit)
-        .attr("stroke", "black")
-        .style("fill", "blue");
+        .attr("stroke", "white")
+        .style("fill", blue);
 
     bar.append("rect")
       .attr("width", barWidth)
@@ -299,8 +301,8 @@ function makeViz(error, profiles) {
       .transition().duration(1000)
         .attr("y", d => y_scale(d.count))
         .attr("height", d => d.f * heightUnit)
-        .attr("stroke", "black")
-        .style("fill", "red");
+        .attr("stroke", "white")
+        .style("fill", pink);
 
     bar.on("mousemove", d => {
       demotooltip
@@ -353,7 +355,7 @@ function makeViz(error, profiles) {
     .data(groups).enter();
 
     var circles = groupsEnter.append("circle")
-      .style("fill", d => d.sex == "m"? "blue": "red")
+      .style("fill", d => d.sex == "m"? blue: pink)
       .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
       .attr("cy", demo_height)
       .attr("r", 0)
@@ -411,7 +413,7 @@ function makeViz(error, profiles) {
     .data(groups).enter();
 
     var circles = groupsEnter.append("circle")
-      .style("fill", d => d.sex == "m"? "blue": "red")
+      .style("fill", d => d.sex == "m"? blue: pink)
       .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
       .attr("cy", demo_height)
       .attr("r", 0)
