@@ -39,11 +39,36 @@
       padding:2px 5px;
       background:#aaa;
       color:#fff;
-
+      border:1px solid #777;
+      margin-right:3px;
     }
-    #close:hover {
+    #refresh:hover, #close:hover {
       cursor:pointer;
       background:#777;
+    }
+
+    #bubbleHeader {
+      /*float:right;*/
+      text-align:center;
+    }
+
+    .tipHeader {
+      text-transform: uppercase;
+      font-size:13px;
+      font-weight:bold;
+    }
+
+    .question {
+      margin-top:20px;
+      border:1px solid #333;
+      border-radius:10px;
+      font-size:20px;
+      background:#ddd;
+    }
+
+    .question:hover {
+      cursor:pointer;
+      background:#aaa;
     }
 
   </style>
@@ -97,7 +122,17 @@
     </div>
   </div>
 
-  <div id="bubbles"></div> <div id="bubbleText" style="width:100%;height:500px;overflow:auto;"></div>
+<div id="wrapper">
+  <div id="bubbles" style="float:left;width:80%">
+  </div>
+  <div id="bubbleHeader">
+    <h3>Filters</h3>
+    <button id="essay0" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay0')">My self summary</button><br>
+    <button id="essay1" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay1')">What I'm doing with my life</button><br>
+    <button id="essay2" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay2')">I'm really good at...</button><br>
+    <button id="essay3" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay3')"> The first thing people usually notice about me</button><br>
+  </div>
+  </div>
 </body>
 
 
@@ -116,10 +151,14 @@ var n = 200, // total number of nodes
 
 var clusters = new Array(m);
 
+loadData("essay1");
+
+function loadData(question) {
+
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
 
-  var essayq = "essay4";
+  var essayq = question;
 
   nodes = [];
 
@@ -135,7 +174,7 @@ d3.json("potato6.json", function(error, data) {
 
   var gender = "both";
   var jData = data.filter( d => (d.essay == essayq))[0];
-  top_both = jData.both.slice(50, 125);
+  top_both = jData.both.slice(50, 50+maletext.length);
   sampleData3 = {"children": top_both.map(function (d){ return  {"text": d.word, "count": d.count, "gender": "s"} }) };
   var sharedText = sampleData3.children.map(d => d.text);
 
@@ -173,8 +212,8 @@ d3.json("potato6.json", function(error, data) {
   });
 
   function getColor(point) {
-    var fCol = "#ed6955";
-    var mCol = "#7a7ac9";
+    var fCol = "#FC6C6E";
+    var mCol = "#61D6FF";
     var sCol = "#c095c6";
     if(point.gender == "f") {
       return fCol;
@@ -216,15 +255,15 @@ d3.json("potato6.json", function(error, data) {
 
   function getRadius(d, mLen, fLen, sLen) {
     if(d.gender == "f") {
-      var scale = d3.scaleLinear().domain(fLen).range([10,50]);
+      var scale = d3.scaleLinear().domain(fLen).range([20,50]);
       return scale(d.count)
     }
     else if(d.gender == 'm') {
-      var scale = d3.scaleLinear().domain(mLen).range([10,50]);
+      var scale = d3.scaleLinear().domain(mLen).range([20,50]);
       return scale(d.count)
     }
     else {
-      var scale = d3.scaleLinear().domain(sLen).range([10,50]);
+      var scale = d3.scaleLinear().domain(sLen).range([20,50]);
       return scale(d.count)
     }
   }
@@ -259,7 +298,8 @@ d3.json("potato6.json", function(error, data) {
     .nodes(nodes);
 
   var tooltip = d3.select("body").append("div")   
-        .attr("class", "tooltip")               
+        .attr("class", "tooltip")   
+        .attr("id", "tooltip")            
         .style("opacity", 0);
 
   var svg = d3.select("#bubbles").append("svg")
@@ -277,12 +317,8 @@ d3.json("potato6.json", function(error, data) {
       //.attr("transform", function(d){return "translate("+d.x+",80)"})
 
   elem.on("click", function(d,i) {
-
-      displayText(d.text, d3.event.pageX, d3.event.pageY);
-    })                  
-    .on("mouseexit", function(d) {       
-        tooltip.transition().duration(500).style("opacity", 0);   
-    });
+     displayText(d.text, d3.event.pageX, d3.event.pageY);
+    })   
 
   var node = elem
       .append("circle")
@@ -300,12 +336,18 @@ d3.json("potato6.json", function(error, data) {
               .style("font-family", "Open Sans")
               .style("font-size", 12);
 
+  function closeTooltip() {
+      console.log('in close');
+      this.parentNode.style.display = 'none';
+  }
+
   function displayText(word, pageX, pageY) {
     //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
+
     d3.csv("essays.csv", function(csv) {
       csv.map(function(row) {
-        if(row.essay4.search(word) != -1) {
+        if(row.essay4.search(word+" ") != -1) {
           first_essays.push(row.essay4);
         }
       });
@@ -320,16 +362,17 @@ d3.json("potato6.json", function(error, data) {
       var startInd = randEss.search(word);
       var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
 
-      var clickFn = "function() {this.parentNode.style('opacity', 0)}";
-
-      tooltip.transition().duration(200).style("opacity", .9);   
-      tooltip.html("<button id='close' onclick=clickFn()>x</button><button id='refresh'>Refresh</button>" +finalStr)  
+      tooltip.transition().duration(500).style("display","").style("opacity", .9);   
+      tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)  
         .style("left", (pageX) + "px")     
-        .style("top", (pageY - 50) + "px"); 
-      tooltip.append("span")
-        .attr('id', 'close')
-        .text('X')
-        .on("click", function() {this.parentNode.style('opacity', 0)}); 
+        .style("top", (pageY - 50) + "px");
+
+      document.getElementById ("close").addEventListener ("click", function(e) {
+        document.getElementById('tooltip').style.display = 'none';
+      });
+      document.getElementById ("refresh").addEventListener ("click", function(e) {
+        displayText(word, pageX, pageY);
+      });
     })
   }
 
@@ -389,6 +432,8 @@ d3.json("potato6.json", function(error, data) {
   }
 
 });
+
+}
 
 </script>
 <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
