@@ -31,6 +31,20 @@
       overflow:auto; 
     }
 
+    #close {
+      float:right;
+      display:inline-block;
+      position:relative;
+      padding:2px 5px;
+      background:#aaa;
+      color:#fff;
+
+    }
+    #close:hover {
+      cursor:pointer;
+      background:#777;
+    }
+
   </style>
 
 </head>
@@ -149,7 +163,7 @@ d3.json("potato6.json", function(error, data) {
   function getColor(point) {
     var fCol = "#ed6955";
     var mCol = "#7a7ac9";
-    var sCol = "#9932CC";
+    var sCol = "#c095c6";
     if(point.gender == "f") {
       return fCol;
     }
@@ -251,7 +265,8 @@ d3.json("potato6.json", function(error, data) {
       //.attr("transform", function(d){return "translate("+d.x+",80)"})
 
   elem.on("click", function(d,i) {
-      displayText(d.text, d3.event.pageX, d3.event.pageY)
+
+      displayText(d.text, d3.event.pageX, d3.event.pageY);
     })                  
     .on("mouseexit", function(d) {       
         tooltip.transition().duration(500).style("opacity", 0);   
@@ -282,7 +297,6 @@ d3.json("potato6.json", function(error, data) {
           first_essays.push(row.essay4);
         }
       });
-      console.log(first_essays);
 
       var randEss = first_essays[Math.floor(Math.random() * first_essays.length)];
 
@@ -294,10 +308,16 @@ d3.json("potato6.json", function(error, data) {
       var startInd = randEss.search(word);
       var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
 
-      tooltip.transition().duration(200).style("opacity", .9);      
-      tooltip.html(finalStr)  
+      var clickFn = "function() {this.parentNode.style('opacity', 0)}";
+
+      tooltip.transition().duration(200).style("opacity", .9);   
+      tooltip.html("<button id='close' onclick="+clickFn+">x</button>" +finalStr)  
         .style("left", (pageX) + "px")     
         .style("top", (pageY - 50) + "px"); 
+      tooltip.append("span")
+        .attr('id', 'close')
+        .text('X')
+        .on("click", function() {this.parentNode.style('opacity', 0)}); 
     })
   }
 
