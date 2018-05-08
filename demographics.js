@@ -5,7 +5,7 @@
 
 var bodyDOM = document.body.getBoundingClientRect();
 // Define Canvas Related params
-const demo_width = bodyDOM.width * 0.40;
+const demo_width = bodyDOM.width * 0.60;
 const demo_height = 600;
 var pointWidth = 2;
 var pointHeight = 2;
@@ -59,34 +59,34 @@ function makeViz(error, profiles) {
 
   svg.on("mousemove", mousemoveActions);
 
-  // Button actions
-  d3.select("#gender")
-    .on("click", _ => {
-      animatePoints(genderLayout);
-      genderLayoutSVG(points);
-    });
+  // // Button actions
+  // d3.select("#gender")
+  //   .on("click", _ => {
+  //     animatePoints(genderLayout);
+  //     genderLayoutSVG(points);
+  //   });
+  //
+  // d3.select("#unsort")
+  //   .on("click", _ => animatePoints(randomLayout));
 
-  d3.select("#unsort")
-    .on("click", _ => animatePoints(randomLayout));
+  // d3.select("#age")
+  //   .on("click", _ => {
+  //     animatePoints(randomLayout);
+  //     setTimeout( _ => {
+  //       animatePoints(toBottom);
+  //       setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
+  //     },1500)
+  //   });
 
-  d3.select("#age")
-    .on("click", _ => {
-      animatePoints(randomLayout);
-      setTimeout( _ => {
-        animatePoints(toBottom);
-        setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
-      },1500)
-    });
-
-  d3.select("#orientation")
-    .on("click", _ => {
-      animatePoints(randomLayout);
-      setTimeout( _ => {
-        animatePoints(toBottom);
-        setTimeout(_ => {pointsOff(); clearSVG(); showOrientationDist()}, 1500);
-      },1500)
-
-    });
+  // d3.select("#orientation")
+  //   .on("click", _ => {
+  //     animatePoints(randomLayout);
+  //     setTimeout( _ => {
+  //       animatePoints(toBottom);
+  //       setTimeout(_ => {pointsOff(); clearSVG(); showOrientationDist()}, 1500);
+  //     },1500)
+  //
+  //   });
 
   d3.select("#jobs")
     .on("click", _ => {
@@ -449,31 +449,81 @@ function makeViz(error, profiles) {
         .attr("y", demo_height + 20);
   }
 
-  // DEFINE ranges for each content change
-  genderContent = [200, 500]
-  ageContent = [500,800]
-  var lastY = document.documentElement.scrollTop;
+  // BEGIN On scroll interactions
 
+  // DEFINE ranges for each content change
+  introRange = [0, 300];
+  ageRange = [300, 800];
+  orientationRange = [800, 1300];
+  jobRange = [1300, 1500];
+  genderRange = [1500, 2000];
+
+
+  var lastY = document.documentElement.scrollTop;
   function triggerFn(range, curr) {
-    return (curr > range[0] && curr < range[1] &&
-      !(lastY > range[0] && lastY < range[1]))
+    var on = (curr > range[0] && curr < range[1] &&
+      !(lastY > range[0] && lastY < range[1]));
+
+      if (on){
+        d3.selectAll(".section")
+        .style("opacity", 0.2);
+      }
+
+    return on;
    }
 
   window.addEventListener("scroll", _ => {
    var scrolltop = document.documentElement.scrollTop;
 
-   if (triggerFn(genderContent, scrolltop)){
-     animatePoints(genderLayout);
-     genderLayoutSVG(points);
+   // Intro
+   if (triggerFn(introRange, scrolltop)){
+     animatePoints(randomLayout);
+     d3.select("#intro-section")
+     .style("opacity", 1);
    }
 
-   if (triggerFn(ageContent, scrolltop)){
+
+
+   // GENDER
+   if (triggerFn(genderRange, scrolltop)){
+     animatePoints(genderLayout);
+     genderLayoutSVG(points);
+     d3.select("#gender-section")
+     .style("opacity", 1);
+   }
+    // AGE
+   if (triggerFn(ageRange, scrolltop)){
      animatePoints(randomLayout);
      setTimeout( _ => {
        animatePoints(toBottom);
        setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
      },1500);
+     d3.select("#age-section")
+     .style("opacity", 1);
    }
+
+   //Orientation
+   if (triggerFn(orientationRange, scrolltop)){
+       animatePoints(randomLayout);
+       setTimeout( _ => {
+         animatePoints(toBottom);
+         setTimeout(_ => {pointsOff(); clearSVG(); showOrientationDist()}, 1500);
+       },1500)
+       d3.select("#orientation-section")
+       .style("opacity", 1);
+    }
+
+    //Jobs
+    if (triggerFn(jobRange, scrolltop)){
+        animatePoints(randomLayout);
+        setTimeout( _ => {
+          animatePoints(toBottom);
+          setTimeout(_ => {pointsOff(); clearSVG(); showJobDist()}, 1500);
+        },1500)
+        d3.select("#job-section")
+        .style("opacity", 1);
+     }
+
 
    lastY = scrolltop;
   })
