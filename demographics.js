@@ -26,16 +26,16 @@ var demodivDOM = document.getElementById("demographics-div").getBoundingClientRe
 
 // SVG overlay
 var svg = d3.select('#demographics-div')
-    .append('svg')
-      .attr('width', canvasDOM.width)
-      .attr('height', canvasDOM.height)
-      .style("position", "absolute")
-      .style("top", canvasDOM.top-demodivDOM.top)
-      .style("left", canvasDOM.left-demodivDOM.left);
+  .append('svg')
+  .attr('width', canvasDOM.width)
+  .attr('height', canvasDOM.height)
+  .style("position", "absolute")
+  .style("top", canvasDOM.top - demodivDOM.top)
+  .style("left", canvasDOM.left - demodivDOM.left);
 
 var demotooltip = d3.select("body").append("div")
-    .attr("class", "demotooltip")
-    .style("display", "none");
+  .attr("class", "demotooltip")
+  .style("display", "none");
 
 // Load in Profiles data
 d3.queue().defer(d3.csv, "meep.csv").await(makeViz);
@@ -61,60 +61,26 @@ function makeViz(error, profiles) {
 
   svg.on("mousemove", mousemoveActions);
 
-  // // Button actions
-  // d3.select("#gender")
-  //   .on("click", _ => {
-  //     animatePoints(genderLayout);
-  //     genderLayoutSVG(points);
-  //   });
-  //
-  // d3.select("#unsort")
-  //   .on("click", _ => animatePoints(randomLayout));
-
-  // d3.select("#age")
-  //   .on("click", _ => {
-  //     animatePoints(randomLayout);
-  //     setTimeout( _ => {
-  //       animatePoints(toBottom);
-  //       setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
-  //     },1500)
-  //   });
-
-  // d3.select("#orientation")
-  //   .on("click", _ => {
-  //     animatePoints(randomLayout);
-  //     setTimeout( _ => {
-  //       animatePoints(toBottom);
-  //       setTimeout(_ => {pointsOff(); clearSVG(); showOrientationDist()}, 1500);
-  //     },1500)
-  //
-  //   });
-
-  // d3.select("#jobs")
-  //   .on("click", _ => {
-  //     animatePoints(randomLayout);
-  //     setTimeout( _ => {
-  //       animatePoints(toBottom);
-  //       setTimeout(_ => {pointsOff(); clearSVG(); showJobDist()}, 1500);
-  //     },1500)
-  //
-  //   });
-
   // Making filters
-  var filters = [["sex", "m"], ["sex", "f"], ["religion", "christianity"], ["religion", "islam"]]
+  var filters = [
+    ["sex", "m"],
+    ["sex", "f"],
+    ["religion", "christianity"],
+    ["religion", "islam"]
+  ]
 
-  function onCheckboxChange(){
+  function onCheckboxChange() {
     filts = [];
     boxes = document.querySelectorAll(".profile-filter");
     Array.from(boxes).forEach(d => {
       box = d3.select(d);
-      if (box.property("checked")){
-         filts.push(pointsFilter(box.attr("field"), box.attr("value")))
-       }
-     });
+      if (box.property("checked")) {
+        filts.push(pointsFilter(box.attr("field"), box.attr("value")))
+      }
+    });
 
-   filterPoints(filts);
-   drawPoints();
+    filterPoints(filts);
+    drawPoints();
 
   }
 
@@ -122,27 +88,27 @@ function makeViz(error, profiles) {
     var div = d3.select("#filters").append("div");
 
     div.append("input")
-    .attr("type", "checkbox")
-    .attr("class", "profile-filter")
-    .attr("id", (d[0]+"-"+d[1]))
-    .attr("field", d[0])
-    .attr("value", d[1])
-    .on("change", onCheckboxChange);
+      .attr("type", "checkbox")
+      .attr("class", "profile-filter")
+      .attr("id", (d[0] + "-" + d[1]))
+      .attr("field", d[0])
+      .attr("value", d[1])
+      .on("change", onCheckboxChange);
 
     div.append("label")
-    .attr("for", (d[0]+"-"+d[1]))
-    .html(`${d[0]} (${d[1]})`);
+      .attr("for", (d[0] + "-" + d[1]))
+      .html(`${d[0]} (${d[1]})`);
 
   });
 
   /* >>>>>>>>>>>>>> ====== BEGIN utility functions ======= <<<<<<<<<<<<<<<<<<< */
   function filterPoints(filters) {
-    if (filters.length == 0){
+    if (filters.length == 0) {
       points.forEach(pt => pt.display = "visible");
       return;
     }
-    var filtFn = filters.reduce((a,b) => (x => a(x) && b(x)));
-    points.forEach(pt => filtFn(pt) ? pt.display = "visible": pt.display = "invisible")
+    var filtFn = filters.reduce((a, b) => (x => a(x) && b(x)));
+    points.forEach(pt => filtFn(pt) ? pt.display = "visible" : pt.display = "invisible")
   }
 
   function pointsFilter(field, val) {
@@ -167,32 +133,31 @@ function makeViz(error, profiles) {
     var ypt = d3.event.clientY - demodivDOM.top;
 
     filt = points.filter(pt =>
-      (pt.x >= xpt-pointWidth)&&
-      (pt.x <= xpt+pointWidth)&&
-      (pt.y >= ypt-pointHeight)&&
-      (pt.y <= ypt+pointHeight)&&
+      (pt.x >= xpt - pointWidth) &&
+      (pt.x <= xpt + pointWidth) &&
+      (pt.y >= ypt - pointHeight) &&
+      (pt.y <= ypt + pointHeight) &&
       (pt.display == "visible")
     );
 
-    if (filt.length > 0){
+    if (filt.length > 0) {
       var select = filt[0];
       demotooltip
-      .html(select.sex +" "+select.age+ "<br> Essay0: <br>"+select.essay0)
-      .style("display", "inline")
-      .style("top", (d3.event.pageY -34)+ "px")
-      .style("left", (d3.event.pageX-12) + "px")
-    }
-    else {
+        .html(select.sex + " " + select.age + "<br> Essay0: <br>" + select.essay0)
+        .style("display", "inline")
+        .style("top", (d3.event.pageY - 34) + "px")
+        .style("left", (d3.event.pageX - 12) + "px")
+    } else {
       demotooltip.style("display", "none");
     }
   }
 
-  function pointsOn(){
+  function pointsOn() {
     points.forEach(pt => pt.display = "visible");
     pointsOnScreen = true;
   }
 
-  function pointsOff(){
+  function pointsOff() {
     points.forEach(pt => pt.display = "invisible");
     pointsOnScreen = false;
   }
@@ -208,7 +173,7 @@ function makeViz(error, profiles) {
     // draw each point as a rectangle
     for (let i = 0; i < points.length; ++i) {
       point = points[i];
-      if (point.display == "visible"){
+      if (point.display == "visible") {
         ctx.fillStyle = point.color;
         ctx.fillRect(point.x, point.y, pointWidth, pointHeight);
       }
@@ -251,14 +216,19 @@ function makeViz(error, profiles) {
 
   function showAgeDist() {
     var agePoints = [];
-    for( i = 18; i <= 100; i ++){
-      agePoints.push({"age": i, "count": 0, "m": 0, "f": 0});
+    for (i = 18; i <= 100; i++) {
+      agePoints.push({
+        "age": i,
+        "count": 0,
+        "m": 0,
+        "f": 0
+      });
     }
 
-    points.forEach(d =>{
-      if (d.age >= 18 && d.age <= 100){
-        agePoints[d.age-18].count += 1;
-        d.sex =="m"? agePoints[d.age-18].m += 1 : agePoints[d.age-18].f += 1;
+    points.forEach(d => {
+      if (d.age >= 18 && d.age <= 100) {
+        agePoints[d.age - 18].count += 1;
+        d.sex == "m" ? agePoints[d.age - 18].m += 1 : agePoints[d.age - 18].f += 1;
       }
     });
     min_age = 18;
@@ -266,7 +236,7 @@ function makeViz(error, profiles) {
     max_count = d3.max(agePoints, x => x.count);
     padding_x = 50;
     padding_y = 100;
-    barWidth = demo_width / (max_age-min_age);
+    barWidth = demo_width / (max_age - min_age);
     heightUnit = (demo_height - padding_y) / max_count;
 
     var x_scale = d3.scale.linear()
@@ -284,41 +254,41 @@ function makeViz(error, profiles) {
     var bar = chart.selectAll("g")
       .data(agePoints)
       .enter().append("g")
-      .attr("transform", (d,i) => "translate(" + (i * barWidth + padding_x) + "," + 0 + ")");
+      .attr("transform", (d, i) => "translate(" + (i * barWidth + padding_x) + "," + 0 + ")");
 
     bar.append("rect")
       .attr("width", barWidth)
       .attr("y", y_scale(0))
       .transition().duration(1000)
-        .attr("y", d => y_scale(d.m))
-        .attr("height", d => d.m * heightUnit)
-        .attr("stroke", "white")
-        .style("fill", blue);
+      .attr("y", d => y_scale(d.m))
+      .attr("height", d => d.m * heightUnit)
+      .attr("stroke", "white")
+      .style("fill", blue);
 
     bar.append("rect")
       .attr("width", barWidth)
       .attr("y", y_scale(0))
       .transition().duration(1000)
-        .attr("y", d => y_scale(d.count))
-        .attr("height", d => d.f * heightUnit)
-        .attr("stroke", "white")
-        .style("fill", pink);
+      .attr("y", d => y_scale(d.count))
+      .attr("height", d => d.f * heightUnit)
+      .attr("stroke", "white")
+      .style("fill", pink);
 
     bar.on("mousemove", d => {
-      demotooltip
-      .style("display", "inline")
-      .style("top", (d3.event.pageY-34)+ "px")
-      .style("left", (d3.event.pageX-12) + "px")
-      .html(`Age ${d.age} <br> Males ${d.m} <br> Females ${d.f}`)
-    })
-    .on("mouseout", d => {
-      demotooltip
-      .style("display", "none")
-    });
+        demotooltip
+          .style("display", "inline")
+          .style("top", (d3.event.pageY - 34) + "px")
+          .style("left", (d3.event.pageX - 12) + "px")
+          .html(`Age ${d.age} <br> Males ${d.m} <br> Females ${d.f}`)
+      })
+      .on("mouseout", d => {
+        demotooltip
+          .style("display", "none")
+      });
 
     ctx = canvas.node().getContext('2d');
     ctx.save();
-     // erase what is on the canvas currently
+    // erase what is on the canvas currently
     ctx.clearRect(0, 0, demo_width, demo_height);
     ctx.restore();
   }
@@ -327,16 +297,24 @@ function makeViz(error, profiles) {
 
     ctx = canvas.node().getContext('2d');
     ctx.save();
-     // erase what is on the canvas currently
+    // erase what is on the canvas currently
     ctx.clearRect(0, 0, demo_width, demo_height);
     ctx.restore();
 
     var orientations = ["gay", "straight", "bisexual"];
     var groups = [];
 
-    orientations.forEach(o =>{
-      groups.push({"orientation":o, "sex": "m", "count": 0 });
-      groups.push({"orientation":o, "sex": "f", "count": 0 });
+    orientations.forEach(o => {
+      groups.push({
+        "orientation": o,
+        "sex": "m",
+        "count": 0
+      });
+      groups.push({
+        "orientation": o,
+        "sex": "f",
+        "count": 0
+      });
     });
     points.forEach(d => {
       var group = groups.filter(g => g.orientation == d.orientation && d.sex == g.sex);
@@ -346,37 +324,37 @@ function makeViz(error, profiles) {
     var max_r = 150;
 
     var rscale = d3.scale.linear()
-    .domain([1, d3.max(groups, x => x.count)])
-    .range([0, max_r])
+      .domain([1, d3.max(groups, x => x.count)])
+      .range([0, max_r])
 
     var viz = svg.append("g");
 
     var groupsEnter = viz.selectAll("g")
-    .data(groups).enter();
+      .data(groups).enter();
 
     var circles = groupsEnter.append("circle")
-      .style("fill", d => d.sex == "m"? blue: pink)
-      .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
+      .style("fill", d => d.sex == "m" ? blue : pink)
+      .attr("cx", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r)
       .attr("cy", demo_height)
       .attr("r", 0)
 
     circles.transition().duration(1500)
-    .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
-    .attr("cy", (d,i) => Math.floor(i/2) * height/3 + 100)
-    .attr("r", d => rscale(d.count));
+      .attr("cx", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r)
+      .attr("cy", (d, i) => Math.floor(i / 2) * height / 3 + 100)
+      .attr("r", d => rscale(d.count));
 
     circles
-    .on("mousemove", d => {
-      demotooltip
-      .style("display", "inline")
-      .style("top", (d3.event.clientY-34)+ "px")
-      .style("left", (d3.event.clientX-12) + "px")
-      .html(`${d.orientation}, ${d.sex} <br> Count: ${d.count}`)
-    })
-    .on("mouseout", d => {
-      demotooltip
-      .style("display", "none")
-    });
+      .on("mousemove", d => {
+        demotooltip
+          .style("display", "inline")
+          .style("top", (d3.event.clientY - 34) + "px")
+          .style("left", (d3.event.clientX - 12) + "px")
+          .html(`${d.orientation}, ${d.sex} <br> Count: ${d.count}`)
+      })
+      .on("mouseout", d => {
+        demotooltip
+          .style("display", "none")
+      });
 
   }
 
@@ -384,16 +362,24 @@ function makeViz(error, profiles) {
 
     ctx = canvas.node().getContext('2d');
     ctx.save();
-     // erase what is on the canvas currently
+    // erase what is on the canvas currently
     ctx.clearRect(0, 0, demo_width, demo_height);
     ctx.restore();
 
-    var jobs = ['artistic / musical / writer', 'banking / financial / real estate', 'clerical / administrative', 'computer / hardware / software', 'construction / craftsmanship', 'education / academia', 'entertainment / media', 'executive / management','hospitality / travel','law / legal services','medicine / health','military','other','political / government','rather not say','retired','sales / marketing / biz dev','science / tech / engineering','student','transportation','unemployed']
+    var jobs = ['artistic / musical / writer', 'banking / financial / real estate', 'clerical / administrative', 'computer / hardware / software', 'construction / craftsmanship', 'education / academia', 'entertainment / media', 'executive / management', 'hospitality / travel', 'law / legal services', 'medicine / health', 'military', 'other', 'political / government', 'rather not say', 'retired', 'sales / marketing / biz dev', 'science / tech / engineering', 'student', 'transportation', 'unemployed']
     var groups = [];
 
-    jobs.forEach(o =>{
-      groups.push({"job":o, "sex": "m", "count": 0 });
-      groups.push({"job":o, "sex": "f", "count": 0 });
+    jobs.forEach(o => {
+      groups.push({
+        "job": o,
+        "sex": "m",
+        "count": 0
+      });
+      groups.push({
+        "job": o,
+        "sex": "f",
+        "count": 0
+      });
     });
 
     points.forEach(d => {
@@ -401,70 +387,46 @@ function makeViz(error, profiles) {
       if (group.length > 0) group[0].count += 1;
     });
 
-    var data = {"children":groups};
+    var data = {
+      "children": groups
+    };
 
     var bubble = d3.pack(data)
-    .size([demo_width, demo_height])
-    .padding(1.5);
+      .size([demo_width, demo_height])
+      .padding(1.5);
 
     var nodes = d3.hierarchy(data)
-        .sum(function(d) { return d.count; });
+      .sum(function(d) {
+        return d.count;
+      });
 
     var viz = svg.append("g");
 
     var node = viz.selectAll(".node")
-            .data(bubble(nodes).descendants())
-            .enter()
-            .filter(function(d){
-                return  !d.children
-            })
-            .append("g")
-            .attr("class", "node")
-            .attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
+      .data(bubble(nodes).descendants())
+      .enter()
+      .filter(function(d) {
+        return !d.children
+      })
+      .append("g")
+      .attr("class", "node");
 
     var circles = node.append("circle")
-        .attr("r", function(d) {
-            return 0;
-        })
-        .style("fill", function(d,i) {
-            return d.data.sex == "m"? blue : pink;
-        });
+      .attr("r", 0)
+      .style("fill", function(d, i) {
+        return d.data.sex == "m" ? blue : pink;
+      })
+      .attr("cx", d => d.x)
+      .attr("cy", demo_height)
 
-    // var groupsEnter = viz.selectAll("g")
-    // .data(bubble(nodes).descendants()).enter()
-    // .
-    //
-    // groupsEnter.append("circle")
-    // .attr("r", d => d.r)
-    // .attr("cx", d => d.x)
-    // .attr("cy", d => d.data.sex =="m"? blue : pink);
-
-    // var circles = groupsEnter.append("circle")
-    //   .style("fill", d => d.sex == "m"? blue: pink)
-    //   .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
-    //   .attr("cy", demo_height)
-    //   .attr("r", 0)
-    //
     circles.transition().duration(1500)
-    .attr("r", d => d.r);
-    //
-    // circles
-    // .on("mousemove", d => {
-    //   demotooltip
-    //   .style("display", "inline")
-    //   .style("top", (d3.event.clientY-34)+ "px")
-    //   .style("left", (d3.event.clientX-12) + "px")
-    //   .html(`${d.job}, ${d.sex} <br> Count: ${d.count}`)
-    // })
-    // .on("mouseout", d => {
-    //   demotooltip
-    //   .style("display", "none")
-    // });
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y)
+      .attr("r", d => d.r);
+
   }
 
-  function genderLayoutSVG(points){
+  function genderLayoutSVG(points) {
     male = points.filter(x => x.sex == "m");
     female = points.filter(x => x.sex == "f");
     var labels = svg.append("g");
@@ -473,90 +435,103 @@ function makeViz(error, profiles) {
       .attr("x", 100)
       .attr("y", demo_height + 20);
     labels.append("text")
-        .text("Female Users: " + female.length)
-        .attr("x", 500)
-        .attr("y", demo_height + 20);
+      .text("Female Users: " + female.length)
+      .attr("x", 500)
+      .attr("y", demo_height + 20);
   }
 
-  // BEGIN On scroll interactions
+  // BEGIN On scroll interaction
+  contentDiv = document.getElementById("content").getBoundingClientRect();
+  lastContentAnchor = contentDiv.offsetTop + contentDiv.height - demo_height;
 
-  // DEFINE ranges for each content change
-  introRange = [0, 300];
-  ageRange = [300, 800];
-  orientationRange = [800, 1300];
-  jobRange = [1300, 1500];
-  genderRange = [1500, 2000];
-
+  section_to_bounds = [];
+  padding = 200;
+  document.querySelectorAll(".section").forEach(s =>{
+    console.log(s);
+    divDOM = s.getBoundingClientRect();
+    section_to_bounds.push({
+        "id": s.getAttribute("id"),
+        "bounds":[divDOM.y - padding, divDOM.y + divDOM.height - padding]
+      });
+  });
 
   var lastY = document.documentElement.scrollTop;
-  function triggerFn(range, curr) {
-    var on = (curr > range[0] && curr < range[1] &&
+
+  function triggerFn(contentName, currY) {
+    range = section_to_bounds.filter(x => x.id == contentName)[0].bounds;
+    var on = (currY > range[0] && currY < range[1] &&
       !(lastY > range[0] && lastY < range[1]));
 
-      if (on){
-        d3.selectAll(".section")
+    if (on) {
+      d3.selectAll(".section")
         .style("opacity", 0.2);
-      }
+        d3.select("#"+contentName)
+          .style("opacity", 1);
+    }
 
     return on;
-   }
+  }
 
   window.addEventListener("scroll", _ => {
-   var scrolltop = document.documentElement.scrollTop;
 
-   // Intro
-   if (triggerFn(introRange, scrolltop)){
-     animatePoints(randomLayout);
-     d3.select("#intro-section")
-     .style("opacity", 1);
-   }
+    var scrolltop = document.documentElement.scrollTop;
 
+    // Intro
+    if (triggerFn("intro-section", scrolltop)) {
+      animatePoints(randomLayout);
+    }
 
+    // GENDER
+    if (triggerFn("gender-section", scrolltop)) {
+      animatePoints(genderLayout);
+      genderLayoutSVG(points);
 
-   // GENDER
-   if (triggerFn(genderRange, scrolltop)){
-     animatePoints(genderLayout);
-     genderLayoutSVG(points);
-     d3.select("#gender-section")
-     .style("opacity", 1);
-   }
+      d3.select("#demographics-div")
+      .style("position", "absolute")
+      .style("top", lastContentAnchor +"px");
+    }
+
     // AGE
-   if (triggerFn(ageRange, scrolltop)){
-     animatePoints(randomLayout);
-     setTimeout( _ => {
-       animatePoints(toBottom);
-       setTimeout(x => {pointsOff(); clearSVG(); showAgeDist()}, 1500);
-     },1500);
-     d3.select("#age-section")
-     .style("opacity", 1);
-   }
+    if (triggerFn("age-section", scrolltop)) {
+      animatePoints(randomLayout);
+      setTimeout(_ => {
+        animatePoints(toBottom);
+        setTimeout(x => {
+          pointsOff();
+          clearSVG();
+          showAgeDist()
+        }, 1500);
+      }, 1500);
+    }
 
-   //Orientation
-   if (triggerFn(orientationRange, scrolltop)){
-       animatePoints(randomLayout);
-       setTimeout( _ => {
-         animatePoints(toBottom);
-         setTimeout(_ => {pointsOff(); clearSVG(); showOrientationDist()}, 1500);
-       },1500)
-       d3.select("#orientation-section")
-       .style("opacity", 1);
+    //Orientation
+    if (triggerFn("orientation-section", scrolltop)) {
+      animatePoints(randomLayout);
+      setTimeout(_ => {
+        animatePoints(toBottom);
+        setTimeout(_ => {
+          pointsOff();
+          clearSVG();
+          showOrientationDist()
+        }, 1500);
+      }, 1500)
     }
 
     //Jobs
-    if (triggerFn(jobRange, scrolltop)){
-        animatePoints(randomLayout);
-        setTimeout( _ => {
-          animatePoints(toBottom);
-          setTimeout(_ => {pointsOff(); clearSVG(); showJobDist()}, 1500);
-        },1500)
-        d3.select("#job-section")
-        .style("opacity", 1);
-     }
+    if (triggerFn("job-section", scrolltop)) {
+      animatePoints(randomLayout);
+      setTimeout(_ => {
+        animatePoints(toBottom);
+        setTimeout(_ => {
+          pointsOff();
+          clearSVG();
+          showJobDist()
+        }, 1500);
+      }, 1500)
+    }
 
-
-   lastY = scrolltop;
+    lastY = scrolltop;
   })
-
 
 
 } // End of makeViz
@@ -606,7 +581,7 @@ function toBottom(points) {
   return points;
 }
 
-function toGrid(points){
+function toGrid(points) {
   max_x = demo_width / pointWidth / 4;
   max_y = demo_height / pointHeight / 2;
   x = 0;
@@ -625,8 +600,8 @@ function toGrid(points){
 
 function toCenter(points) {
   points.forEach(function(d) {
-    d.x = demo_width/2;
-    d.y = demo_height/2;
+    d.x = demo_width / 2;
+    d.y = demo_height / 2;
   });
   return points;
 }
