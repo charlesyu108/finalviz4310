@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text 
 from nltk.tokenize import TweetTokenizer
 from nltk import FreqDist,pos_tag
+import pickle
 
 import operator
 import json
@@ -112,6 +113,30 @@ english_plus.add("x")
 english_plus.add("y")
 english_plus.add("z")
 english_plus.add("there's")
+english_plus.add(";)")
+english_plus.add("oh")
+english_plus.add("got")
+english_plus.add("im")
+english_plus.add("in")
+english_plus.add("maybe")
+english_plus.add("can't")
+english_plus.add("went")
+english_plus.add("probably")
+english_plus.add("profile")
+english_plus.add("california")
+english_plus.add("place")
+english_plus.add("makes")
+english_plus.add("tend")
+english_plus.add("in")
+english_plus.add("in")
+english_plus.add("in")
+english_plus.add("in")
+english_plus.add("in")
+english_plus.add("in")
+english_plus.add("in")
+
+
+
 
 
 
@@ -133,6 +158,23 @@ for essay in essays:
 
 	# Females
 	counts = cvect.fit_transform(df[df.sex == 'f'][essay].values.astype('U'))
+	# with open("{}-{}-matx.pickle".format(essay, "f"), "wb+") as f:
+	# 	pickle.dump(counts,f)
+
+	# with open("{}-{}-features.pickle".format(essay, "f"), "wb+") as f:
+	# 	pickle.dump(cvect.get_feature_names(),f)
+	with open("pickles/{}-{}-matx.pickle".format(essay, "f"), "rb+") as f:
+		tfidf = pickle.load(f)
+
+	with open("pickles/{}-{}-features.pickle".format(essay, "f"), "rb+") as f:
+		featurez = pickle.load(f)
+
+	# featurez is the 200 words labels, look at each column and calculate stuffz
+	meep_dict = {}
+	for i in range(len(featurez)):
+		column_i = tfidf[:,i].toarray()
+		meep_dict[featurez[i]] = (np.where(column_i > 0)[0]).tolist()
+
 	# counts = cvect.fit_transform(reviews_adj_adv_only)
 	counts_sum = (counts.toarray().sum(axis=0)).tolist()
 	cvect_dict = cvect.vocabulary_ #ohh these are just indexes cuz vector is always the same cuz vector space model
@@ -143,8 +185,24 @@ for essay in essays:
 	# essays_pos_tagged= [pos_tag(tweettokenizer.tokenize(m)) for m in df[df.sex == 'm'][essay].values.astype('U')]
 	# reviews_adj_adv_only=[" ".join([w for w,tag in m if tag in ["JJ","RB","RBS","RBJ","JJR","JJS"]])
 	# 						  for m in essays_pos_tagged]
-
+	cvect = TfidfVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, tokenizer=tweettokenizer.tokenize, ngram_range=(1,2))
 	counts = cvect.fit_transform(df[df.sex == 'm'][essay].values.astype('U'))
+	# with open("{}-{}-matx.pickle".format(essay, "m"), "wb+") as f:
+	# 	pickle.dump(counts,f)
+
+	# with open("{}-{}-features.pickle".format(essay, "m"), "wb+") as f:
+	# 	pickle.dump(cvect.get_feature_names(),f)
+	with open("pickles/{}-{}-matx.pickle".format(essay, "m"), "rb+") as f:
+		tfidf = pickle.load(f)
+
+	with open("pickles/{}-{}-features.pickle".format(essay, "m"), "rb+") as f:
+		featurez = pickle.load(f)
+
+	meep_dict2 = {}
+	for i in range(len(featurez)):
+		column_i = tfidf[:,i].toarray()
+		meep_dict2[featurez[i]] = (np.where(column_i > 0)[0]).tolist()
+
 	# counts = cvect.fit_transform(reviews_adj_adv_only)
 	counts_sum = (counts.toarray().sum(axis=0)).tolist()
 	cvect_dict = cvect.vocabulary_ #ohh these are just indexes cuz vector is always the same cuz vector space model
@@ -207,17 +265,17 @@ for essay in essays:
 
 
 	sorted_top_f = sorted(female_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_fdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_f]
+	sorted_top_fdarray = [{'word':x[0], 'count':x[1], 'index':meep_dict[x[0]]} for x in sorted_top_f]
 	# sorted_f_word = [x[0] for x in sorted_top_f]
 	# sorted_f_count = [x[1] for x in sorted_top_f]
 	
 	sorted_top_m = sorted(male_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_mdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_m]
+	sorted_top_mdarray = [{'word':x[0], 'count':x[1], 'index':meep_dict2[x[0]]} for x in sorted_top_m]
 	# sorted_m_word = [x[0] for x in sorted_top_m]
 	# sorted_m_count = [x[1] for x in sorted_top_m]
 	
 	sorted_top_both = sorted(shared_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'mcount': male_dict[x[0]]} for x in sorted_top_both]
+	sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'findex':meep_dict[x[0]], 'mcount': male_dict[x[0]], 'mindex':meep_dict2[x[0]]} for x in sorted_top_both]
 	# sorted_both_word = [x[0] for x in sorted_top_both]
 	# sorted_both_count = [x[1] for x in sorted_top_both]
 
@@ -226,7 +284,7 @@ for essay in essays:
 	json_array.append(meep)
 
 
-with open('potato6.json', 'w') as outfile:
+with open('topwords.json', 'w') as outfile:
 
 	json.dump(json_array, outfile, indent=4)
 
