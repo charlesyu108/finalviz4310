@@ -170,13 +170,14 @@ d3.json("potato6.json", function(error, data) {
 
   d3.select("#essay0").on("click", _ => {
     console.log("button pressed");
-    svg.selectAll("*").remove();
+    svg.select("#node_g").remove();
     loadData("essay0");
   });
 
 function loadData(question) {
   console.log("load data");
 
+  var node_g = svg.append("g").attr("id", "node_g").attr("height", height).attr("width", width);
   var essayq = question;
 
   nodes = [];
@@ -316,7 +317,7 @@ function loadData(question) {
     .on('tick', layoutTick)
     .nodes(nodes);
 
-  var elem = svg.selectAll("g")
+  var elem = node_g.selectAll("g")
       .data(nodes)
       .enter()
       .append("g")
