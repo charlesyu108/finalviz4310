@@ -127,10 +127,10 @@
   </div>
   <div id="bubbleHeader">
     <h3>Filters</h3>
-    <button id="essay0" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay0')">My self summary</button><br>
-    <button id="essay1" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay1')">What I'm doing with my life</button><br>
-    <button id="essay2" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay2')">I'm really good at...</button><br>
-    <button id="essay3" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay3')"> The first thing people usually notice about me</button><br>
+    <button id="essay0" class="question">My self summary</button><br>
+    <!-- <button id="essay1" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay1')">What I'm doing with my life</button><br> -->
+    <!-- <button id="essay2" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay2')">I'm really good at...</button><br> -->
+    <!-- <button id="essay3" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay3')"> The first thing people usually notice about me</button><br> -->
   </div>
   </div>
 </body>
@@ -151,12 +151,31 @@ var n = 200, // total number of nodes
 
 var clusters = new Array(m);
 
-loadData("essay1");
+// function loadData(question) {
 
-function loadData(question) {
+var tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .attr("id", "tooltip")
+      .style("opacity", 0);
+
+var svg = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "border:none");
 
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
+
+  loadData("essay1");
+
+  d3.select("#essay0").on("click", _ => {
+    console.log("button pressed");
+    svg.selectAll("*").remove();
+    loadData("essay0");
+  });
+
+function loadData(question) {
+  console.log("load data");
 
   var essayq = question;
 
@@ -297,17 +316,6 @@ d3.json("potato6.json", function(error, data) {
     .on('tick', layoutTick)
     .nodes(nodes);
 
-
-  var tooltip = d3.select("body").append("div")   
-        .attr("class", "tooltip")   
-        .attr("id", "tooltip")            
-        .style("opacity", 0);
-
-  var svg = d3.select("#bubbles").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("style", "border:none");
-
   var elem = svg.selectAll("g")
       .data(nodes)
       .enter()
@@ -319,7 +327,7 @@ d3.json("potato6.json", function(error, data) {
 
   elem.on("click", function(d,i) {
      displayText(d.text, d3.event.pageX, d3.event.pageY);
-    })   
+    })
 
   var node = elem
       .append("circle")
@@ -363,9 +371,9 @@ d3.json("potato6.json", function(error, data) {
       var startInd = randEss.search(word);
       var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
 
-      tooltip.transition().duration(500).style("display","").style("opacity", .9);   
-      tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)  
-        .style("left", (pageX) + "px")     
+      tooltip.transition().duration(500).style("display","").style("opacity", .9);
+      tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)
+        .style("left", (pageX) + "px")
         .style("top", (pageY - 50) + "px");
 
       document.getElementById ("close").addEventListener ("click", function(e) {
@@ -432,9 +440,9 @@ d3.json("potato6.json", function(error, data) {
 
   }
 
-});
-
 }
+
+});
 
 </script>
 <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

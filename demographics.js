@@ -25,7 +25,7 @@ var canvasDOM = document.getElementById("canvas").getBoundingClientRect();
 var demodivDOM = document.getElementById("demographics-div").getBoundingClientRect();
 
 // SVG overlay
-var svg = d3.select('#demographics-div')
+var demosvg = d3.select('#demographics-div')
   .append('svg')
   .attr('width', canvasDOM.width)
   .attr('height', canvasDOM.height)
@@ -59,7 +59,7 @@ function makeViz(error, profiles) {
   drawPoints();
   animatePoints(randomLayout);
 
-  svg.on("mousemove", mousemoveActions);
+  demosvg.on("mousemove", mousemoveActions);
 
   // Making filters
   var filters = [
@@ -116,7 +116,7 @@ function makeViz(error, profiles) {
   }
 
   function clearSVG() {
-    svg.selectAll("g").remove();
+    demosvg.selectAll("g").remove();
   }
 
   function clearCanvas() {
@@ -248,7 +248,7 @@ function makeViz(error, profiles) {
       .domain([0, max_count])
       .range([demo_height, padding_y]);
 
-    var chart = svg.append("g")
+    var chart = demosvg.append("g")
       .attr("width", demo_width)
       .attr("height", demo_height);
 
@@ -328,7 +328,7 @@ function makeViz(error, profiles) {
       .domain([1, d3.max(groups, x => x.count)])
       .range([0, max_r])
 
-    var viz = svg.append("g");
+    var viz = demosvg.append("g");
 
     var groupsEnter = viz.selectAll("g")
       .data(groups).enter();
@@ -401,7 +401,7 @@ function makeViz(error, profiles) {
         return d.count;
       });
 
-    var viz = svg.append("g");
+    var viz = demosvg.append("g");
 
     var node = viz.selectAll(".node")
       .data(bubble(nodes).descendants())
@@ -430,7 +430,7 @@ function makeViz(error, profiles) {
   function genderLayoutSVG(points) {
     male = points.filter(x => x.sex == "m");
     female = points.filter(x => x.sex == "f");
-    var labels = svg.append("g");
+    var labels = demosvg.append("g");
     labels.append("text")
       .text("Male Users: " + male.length)
       .attr("x", 100)
