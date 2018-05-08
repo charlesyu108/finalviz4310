@@ -90,15 +90,15 @@ function makeViz(error, profiles) {
   //
   //   });
 
-  d3.select("#jobs")
-    .on("click", _ => {
-      animatePoints(randomLayout);
-      setTimeout( _ => {
-        animatePoints(toBottom);
-        setTimeout(_ => {pointsOff(); clearSVG(); showJobDist()}, 1500);
-      },1500)
-
-    });
+  // d3.select("#jobs")
+  //   .on("click", _ => {
+  //     animatePoints(randomLayout);
+  //     setTimeout( _ => {
+  //       animatePoints(toBottom);
+  //       setTimeout(_ => {pointsOff(); clearSVG(); showJobDist()}, 1500);
+  //     },1500)
+  //
+  //   });
 
   // Making filters
   var filters = [["sex", "m"], ["sex", "f"], ["religion", "christianity"], ["religion", "islam"]]
@@ -388,53 +388,80 @@ function makeViz(error, profiles) {
     ctx.clearRect(0, 0, demo_width, demo_height);
     ctx.restore();
 
-    // var jobs = ["student", "art/music/writing", "banking/finance", "administration", "technology", "construction", "education", "entertainment/media", "management", "hospitality", "law", "medicine", "military", "politics/government", "sales/marketing", "science/engineering", "transportation", "unemployed", "other", "rather not say", "retire"];
-    jobs = ['artistic / musical / writer', 'banking / financial / real estate', 'clerical / administrative', 'computer / hardware / software', 'construction / craftsmanship', 'education / academia', 'entertainment / media', 'executive / management','hospitality / travel','law / legal services','medicine / health','military','other','political / government','rather not say','retired','sales / marketing / biz dev','science / tech / engineering','student','transportation','unemployed']
+    var jobs = ['artistic / musical / writer', 'banking / financial / real estate', 'clerical / administrative', 'computer / hardware / software', 'construction / craftsmanship', 'education / academia', 'entertainment / media', 'executive / management','hospitality / travel','law / legal services','medicine / health','military','other','political / government','rather not say','retired','sales / marketing / biz dev','science / tech / engineering','student','transportation','unemployed']
     var groups = [];
 
     jobs.forEach(o =>{
       groups.push({"job":o, "sex": "m", "count": 0 });
       groups.push({"job":o, "sex": "f", "count": 0 });
     });
+
     points.forEach(d => {
       var group = groups.filter(g => g.job == d.job && d.sex == g.sex);
       if (group.length > 0) group[0].count += 1;
     });
 
-    var max_r = 150;
+    var data = {"children":groups};
 
-    var rscale = d3.scale.linear()
-    .domain([1, d3.max(groups, x => x.count)])
-    .range([0, max_r])
+    var bubble = d3.pack(data)
+    .size([demo_width, demo_height])
+    .padding(1.5);
+
+    var nodes = d3.hierarchy(data)
+        .sum(function(d) { return d.count; });
 
     var viz = svg.append("g");
 
-    var groupsEnter = viz.selectAll("g")
-    .data(groups).enter();
+    var node = viz.selectAll(".node")
+            .data(bubble(nodes).descendants())
+            .enter()
+            .filter(function(d){
+                return  !d.children
+            })
+            .append("g")
+            .attr("class", "node")
+            .attr("transform", function(d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
 
-    var circles = groupsEnter.append("circle")
-      .style("fill", d => d.sex == "m"? blue: pink)
-      .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
-      .attr("cy", demo_height)
-      .attr("r", 0)
+    var circles = node.append("circle")
+        .attr("r", function(d) {
+            return 0;
+        })
+        .style("fill", function(d,i) {
+            return d.data.sex == "m"? blue : pink;
+        });
 
+    // var groupsEnter = viz.selectAll("g")
+    // .data(bubble(nodes).descendants()).enter()
+    // .
+    //
+    // groupsEnter.append("circle")
+    // .attr("r", d => d.r)
+    // .attr("cx", d => d.x)
+    // .attr("cy", d => d.data.sex =="m"? blue : pink);
+
+    // var circles = groupsEnter.append("circle")
+    //   .style("fill", d => d.sex == "m"? blue: pink)
+    //   .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
+    //   .attr("cy", demo_height)
+    //   .attr("r", 0)
+    //
     circles.transition().duration(1500)
-    .attr("cx", d => d.sex == "m"? demo_width/2 - max_r: demo_width/2 + max_r)
-    .attr("cy", (d,i) => Math.floor(i/2) * height/3 + 100)
-    .attr("r", d => rscale(d.count));
-
-    circles
-    .on("mousemove", d => {
-      demotooltip
-      .style("display", "inline")
-      .style("top", (d3.event.clientY-34)+ "px")
-      .style("left", (d3.event.clientX-12) + "px")
-      .html(`${d.job}, ${d.sex} <br> Count: ${d.count}`)
-    })
-    .on("mouseout", d => {
-      demotooltip
-      .style("display", "none")
-    });
+    .attr("r", d => d.r);
+    //
+    // circles
+    // .on("mousemove", d => {
+    //   demotooltip
+    //   .style("display", "inline")
+    //   .style("top", (d3.event.clientY-34)+ "px")
+    //   .style("left", (d3.event.clientX-12) + "px")
+    //   .html(`${d.job}, ${d.sex} <br> Count: ${d.count}`)
+    // })
+    // .on("mouseout", d => {
+    //   demotooltip
+    //   .style("display", "none")
+    // });
   }
 
   function genderLayoutSVG(points){
