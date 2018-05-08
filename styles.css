@@ -9,45 +9,52 @@ svg {
   margin-top: -20px;
   pointer-events: none;
   background-color: lightblue;
-  opacity:0.6;
+  opacity: 0.6;
 }
 
 .jumbotron {
   position: static;
 	font-family: 'Fira Mono', monospace;
-	color: white;
+	color: gray;
   width: 100%;
+  background-image: url('his-hers.jpg');
+  background-size: 1425px;
+  background-repeat: no-repeat;
+/*  background-position: 10% 50%;*/
 }
 
 .icons-div {
-  position: relative;
   display: inline;
-  top: -45px;
+  position: relative;
+  top: -295px;
   left: 675px;
 }
 
 .heart {
-  height: 30px;
+  height: 35px;
   margin-left: 10px;
 }
 
 .laptop {
-  height: 30px;
+  height: 35px;
 }
 
 .display-5 {
 	font-weight: bold;
-  padding-top: 100px;
+  padding-top: 250px;
   padding-left: 50px;
 }
 
 .lead {
   padding-left: 50px;
+  padding-bottom: 200px;
+  padding-top: 0px;
 }
 
 #demographics-div {
   float: left;
   position: sticky;
+  top:100px;
   margin-right: 5px;
   margin-left:20px;
 }
@@ -56,7 +63,11 @@ svg {
   padding-right: 5%;
   padding-left: 5px;
   float: right;
-  width: 55%;
+  width: 35%;
+}
+
+h2 {
+  font-family: 'Fira Mono', monospace;
 }
 
 canvas{
