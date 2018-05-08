@@ -23,7 +23,7 @@ margin-left: 50px;
   position: static;
 	font-family: 'Fira Mono', monospace;
 	color: #1f1f1f;
-  background-color: #dbdf4b !important;
+  background-color: #E8ED38 !important;
 }
 
 .icons-div {
@@ -80,6 +80,10 @@ h2 {
 .so-text, .job-text, .gender-text {
   font-family: 'Fira Mono', monospace;
   font-weight: lighter;
+}
+
+p {
+  font-family: "Fira Mono", monospace;
 }
 
 body {

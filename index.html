@@ -173,8 +173,8 @@ d3.json("potato6.json", function(error, data) {
   });
 
   function getColor(point) {
-    var fCol = "#ed6955";
-    var mCol = "#7a7ac9";
+    var fCol = "#FC6C6E"; //"#ed6955";
+    var mCol = "#61D6FF";//"#7a7ac9";
     var sCol = "#c095c6";
     if(point.gender == "f") {
       return fCol;
@@ -296,8 +296,8 @@ d3.json("potato6.json", function(error, data) {
               .text(function(d) {return d.text})
               .attr("class", "circleResize")
               .style("text-anchor", "middle")
-              .style("fill", "#333")
-              .style("font-family", "Open Sans")
+              .style("fill", "dimgray") //"#333"
+              .style("font-family", "Fira Mono")
               .style("font-size", 12);
 
   function displayText(word, pageX, pageY) {
