@@ -343,17 +343,27 @@ function makeViz(error, profiles) {
       .attr("cy", demo_height)
       .attr("r", 0)
 
+    groupsEnter
+    .append("text")
+      .attr("x", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r + 15 )
+      .attr("y", (d, i) => Math.floor(i / 2) * (height / 3) + 100)
+      .attr("dy", ".35em")
+      .text(d => {
+        gender = d.sex == "m" ? "male": "female";
+        return `${d.orientation}, ${gender}`
+      });
+
     circles.transition().duration(1500)
+      .attr("r", d => rscale(d.count))
       .attr("cx", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r)
-      .attr("cy", (d, i) => Math.floor(i / 2) * height / 3 + 100)
-      .attr("r", d => rscale(d.count));
+      .attr("cy", (d, i) => Math.floor(i / 2) * height / 3 + 100);
 
     circles
       .on("mousemove", d => {
         demotooltip
-          .style("display", "inline")
-          .style("top", (d3.event.clientY - 34) + "px")
-          .style("left", (d3.event.clientX - 12) + "px")
+          .style("display", "inline-block")
+          .style("top", (d3.event.pageY - 34) + "px")
+          .style("left", (d3.event.pageX - 12) + "px")
           .html(`${d.orientation}, ${d.sex} <br> Count: ${d.count}`)
       })
       .on("mouseout", d => {
@@ -422,7 +432,19 @@ function makeViz(error, profiles) {
         return d.data.sex == "m" ? blue : pink;
       })
       .attr("cx", d => d.x)
-      .attr("cy", demo_height)
+      .attr("cy", demo_height);
+
+    node
+      .on("mousemove", d => {
+        demotooltip
+        .style("display", "inline")
+        .style("top", (d3.event.pageY - 34) + "px")
+        .style("left", (d3.event.pageX - 12) + "px")
+        .html(`${d.data.job}, ${d.data.sex} (${d.data.count})`)
+      })
+      .on("mouseout", _ => {
+        demotooltip.style("display", "none");
+      });
 
     circles.transition().duration(1500)
       .attr("cx", d => d.x)
