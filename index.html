@@ -440,11 +440,11 @@ function loadData(question, svg) {
 
     // cluster by section
     .force('cluster', cluster()
-      .strength(0.5))
+      .strength(0.7))
 
     // apply collision with padding
     .force('collide', d3.forceCollide(d => d.radius + padding)
-      .strength(0.7))
+      .strength(0.9))
 
     .on('tick', layoutTick)
     .nodes(nodes);

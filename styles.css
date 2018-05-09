@@ -16,7 +16,7 @@ canvas{
   background-color: dimgray;
   color: white;
   font-family: "Helvetica Neue";
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .jumbotron {
@@ -106,8 +106,8 @@ h3 {
 #essay3, #essay4, #essay5,
 #essay6, #essay7, #essay8, #essay9 {
   border: none;
-  font-family: "Helvetica Neue";
-  font-size: 15px;
+  font-family: "Fira Mono", monospace;
+  font-size: 12px;
 }
 
 .am-title {
