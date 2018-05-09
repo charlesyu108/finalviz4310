@@ -376,7 +376,7 @@ function loadData(question, svg) {
       return "#6f6fbc"
     }
     else {
-      return "#a17bb5"
+      // return "#a17bb5"
     }
   }
 
@@ -453,7 +453,7 @@ function loadData(question, svg) {
       .append("circle")
       .style("fill", function(d) {return d.color})
       .style("stroke", function(d) {return  getStroke(d.color)})
-      .style("opacity", 0.8)
+      .style("opacity", 1.0)
 
 
   var label = elem

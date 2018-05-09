@@ -284,7 +284,7 @@ function makeViz(error, profiles) {
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX - 12) + "px")
-          .html(`Age ${d.age} <br> Males ${d.m} <br> Females ${d.f}`)
+          .html(`Age: ${d.age} <br> Males: ${d.m} <br> Females: ${d.f}`)
       })
       .on("mouseout", d => {
         demotooltip
