@@ -128,14 +128,34 @@ english_plus.add("place")
 english_plus.add("makes")
 english_plus.add("tend")
 english_plus.add("in")
+english_plus.add("they're")
+english_plus.add("didn't")
+# english_plus.add("lol")
+english_plus.add("you'd")
+english_plus.add("you've")
+english_plus.add("we'd")
+english_plus.add("won't")
 english_plus.add("in")
 english_plus.add("in")
 english_plus.add("in")
-english_plus.add("in")
-english_plus.add("in")
-english_plus.add("in")
+english_plus.add(".")
+english_plus.add("...")
+english_plus.add("doesn't")
+english_plus.add("aren't")
+english_plus.add("don't")
+english_plus.add("haven't")
+english_plus.add("you'll")
+english_plus.add("he'll")
+english_plus.add("we'll")
+english_plus.add("she'll")
+english_plus.add("i'll")
 
 
+create = False #set this to True if you want to re-pickle new files
+			  #set this to False if you want to use old pickles
+
+kevjumba = False #set this to True if wan't to include Indexes of Documents
+# set this to False if you don't want to include indexs. 
 
 
 
@@ -158,11 +178,13 @@ for essay in essays:
 
 	# Females
 	counts = cvect.fit_transform(df[df.sex == 'f'][essay].values.astype('U'))
-	# with open("{}-{}-matx.pickle".format(essay, "f"), "wb+") as f:
-	# 	pickle.dump(counts,f)
+	if create:
+		with open("pickles/{}-{}-matx.pickle".format(essay, "f"), "wb+") as f:
+			pickle.dump(counts,f)
 
-	# with open("{}-{}-features.pickle".format(essay, "f"), "wb+") as f:
-	# 	pickle.dump(cvect.get_feature_names(),f)
+		with open("pickles/{}-{}-features.pickle".format(essay, "f"), "wb+") as f:
+			pickle.dump(cvect.get_feature_names(),f)
+
 	with open("pickles/{}-{}-matx.pickle".format(essay, "f"), "rb+") as f:
 		tfidf = pickle.load(f)
 
@@ -187,11 +209,14 @@ for essay in essays:
 	# 						  for m in essays_pos_tagged]
 	cvect = TfidfVectorizer(stop_words=english_plus, preprocessor = preprocessed, min_df=10, max_df = 0.95, max_features=200, tokenizer=tweettokenizer.tokenize, ngram_range=(1,2))
 	counts = cvect.fit_transform(df[df.sex == 'm'][essay].values.astype('U'))
-	# with open("{}-{}-matx.pickle".format(essay, "m"), "wb+") as f:
-	# 	pickle.dump(counts,f)
 
-	# with open("{}-{}-features.pickle".format(essay, "m"), "wb+") as f:
-	# 	pickle.dump(cvect.get_feature_names(),f)
+	if create:
+		with open("{}-{}-matx.pickle".format(essay, "m"), "wb+") as f:
+			pickle.dump(counts,f)
+
+		with open("{}-{}-features.pickle".format(essay, "m"), "wb+") as f:
+			pickle.dump(cvect.get_feature_names(),f)
+
 	with open("pickles/{}-{}-matx.pickle".format(essay, "m"), "rb+") as f:
 		tfidf = pickle.load(f)
 
@@ -263,28 +288,44 @@ for essay in essays:
 
 
 
+	if kevjumba:
+		sorted_top_f = sorted(female_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
+		sorted_top_fdarray = [{'word':x[0], 'count':x[1], 'index':meep_dict[x[0]]} for x in sorted_top_f]
+		# sorted_f_word = [x[0] for x in sorted_top_f]
+		# sorted_f_count = [x[1] for x in sorted_top_f]
+		
+		sorted_top_m = sorted(male_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
+		sorted_top_mdarray = [{'word':x[0], 'count':x[1], 'index':meep_dict2[x[0]]} for x in sorted_top_m]
+		# sorted_m_word = [x[0] for x in sorted_top_m]
+		# sorted_m_count = [x[1] for x in sorted_top_m]
+		
+		sorted_top_both = sorted(shared_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
+		sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'findex':meep_dict[x[0]], 'mcount': male_dict[x[0]], 'mindex':meep_dict2[x[0]]} for x in sorted_top_both]
+		# sorted_both_word = [x[0] for x in sorted_top_both]
+		# sorted_both_count = [x[1] for x in sorted_top_both]
+	else:
+		sorted_top_f = sorted(female_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
+		sorted_top_fdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_f]
+		# sorted_f_word = [x[0] for x in sorted_top_f]
+		# sorted_f_count = [x[1] for x in sorted_top_f]
+		
+		sorted_top_m = sorted(male_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
+		sorted_top_mdarray = [{'word':x[0], 'count':x[1]} for x in sorted_top_m]
+		# sorted_m_word = [x[0] for x in sorted_top_m]
+		# sorted_m_count = [x[1] for x in sorted_top_m]
+		
+		sorted_top_both = sorted(shared_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
+		sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'mcount': male_dict[x[0]]} for x in sorted_top_both]
+		# sorted_both_word = [x[0] for x in sorted_top_both]
+		# sorted_both_count = [x[1] for x in sorted_top_both]
 
-	sorted_top_f = sorted(female_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_fdarray = [{'word':x[0], 'count':x[1], 'index':meep_dict[x[0]]} for x in sorted_top_f]
-	# sorted_f_word = [x[0] for x in sorted_top_f]
-	# sorted_f_count = [x[1] for x in sorted_top_f]
-	
-	sorted_top_m = sorted(male_only_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_mdarray = [{'word':x[0], 'count':x[1], 'index':meep_dict2[x[0]]} for x in sorted_top_m]
-	# sorted_m_word = [x[0] for x in sorted_top_m]
-	# sorted_m_count = [x[1] for x in sorted_top_m]
-	
-	sorted_top_both = sorted(shared_dictnobigrams.items(), key=operator.itemgetter(1), reverse=True)
-	sorted_top_bothdarray = [{'word':x[0], 'count':x[1], 'fcount': female_dict[x[0]], 'findex':meep_dict[x[0]], 'mcount': male_dict[x[0]], 'mindex':meep_dict2[x[0]]} for x in sorted_top_both]
-	# sorted_both_word = [x[0] for x in sorted_top_both]
-	# sorted_both_count = [x[1] for x in sorted_top_both]
 
 	# meep = {'essay':essay, 'female':sorted_f_word, 'female_count':sorted_f_count, 'male':sorted_m_word, 'male_count':sorted_m_count, 'both':sorted_both_word, 'both_count':sorted_both_count}
 	meep = {'essay':essay, 'female': sorted_top_fdarray, 'male': sorted_top_mdarray ,'both': sorted_top_bothdarray}
 	json_array.append(meep)
 
 
-with open('topwords.json', 'w') as outfile:
+with open('potato7.json', 'w') as outfile:
 
 	json.dump(json_array, outfile, indent=4)
 
