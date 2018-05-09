@@ -487,7 +487,7 @@ function loadData(question, svg) {
     //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
 
-    d3.csv("profiles.csv", function(csv) {
+    d3.csv(essayq+".csv", function(csv) {
       var count = 0;
       for(i=0; i<d3.keys(csv).length; i++) {
         if(count < 2) {
@@ -513,7 +513,7 @@ function loadData(question, svg) {
         .style("top", (pageY - 50) + "px");
 
       document.getElementById ("close").addEventListener ("click", function(e) {
-        document.getElementById('tooltip').style.display = 'none';
+        tooltip.transition().duration(800).style("display",'none');
       });
       document.getElementById ("refresh").addEventListener ("click", function(e) {
         displayText(word, pageX, pageY);
