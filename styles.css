@@ -87,6 +87,18 @@ canvas{
   margin-right: 50px; */
 }
 
+.FiraMono {
+  font-family: "Fira Mono", monospace;
+}
+
+.bodytext {
+  padding-right: 5%;
+  padding-left: 5%;
+}
+
+.footertext {
+  text-align: center;
+}
 
 h2 {
   font-family: 'Fira Mono', monospace;
