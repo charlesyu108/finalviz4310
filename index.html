@@ -71,6 +71,14 @@
       background:#aaa;
     }
 
+    #wrapper {
+      position:relative;
+    }
+
+    svg {
+      position:absolute;
+    }
+
   </style>
 
 </head>
@@ -128,9 +136,15 @@
   <div id="bubbleHeader">
     <h3>Filters</h3>
     <button id="essay0" class="question">My self summary</button><br>
-    <!-- <button id="essay1" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay1')">What I'm doing with my life</button><br> -->
-    <!-- <button id="essay2" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay2')">I'm really good at...</button><br> -->
-    <!-- <button id="essay3" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay3')"> The first thing people usually notice about me</button><br> -->
+    <button id="essay1" class="question">What I'm doing with my life</button><br>
+    <button id="essay2" class="question">What I'm doing with my life</button><br>
+    <button id="essay3" class="question">What I'm doing with my life</button><br>
+    <button id="essay4" class="question">What I'm doing with my life</button><br>
+    <button id="essay5" class="question">What I'm doing with my life</button><br>
+    <button id="essay6" class="question">What I'm doing with my life</button><br>
+    <button id="essay7" class="question">What I'm doing with my life</button><br>
+    <button id="essay8" class="question">What I'm doing with my life</button><br>
+    <button id="essay9" class="question">What I'm doing with my life</button><br>
   </div>
   </div>
 </body>
@@ -158,24 +172,126 @@ var tooltip = d3.select("body").append("div")
       .attr("id", "tooltip")
       .style("opacity", 0);
 
-var svg = d3.select("#bubbles").append("svg")
+var svg0 = d3.select("#bubbles").append("svg")
     .attr("width", width)
     .attr("height", height)
+    .attr("id", "svg0")
     .attr("style", "border:none");
+var svg1 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg1")
+    .attr("style", "border:none");
+var svg2 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg2")
+    .attr("style", "border:none");
+var svg3 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg3")
+    .attr("style", "border:none");
+var svg4 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg4")
+    .attr("style", "border:none");
+var svg5 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg5")
+    .attr("style", "border:none");
+var svg6 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg6")
+    .attr("style", "border:none");
+var svg7 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg7")
+    .attr("style", "border:none");
+var svg8 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg8")
+    .attr("style", "border:none");
+var svg9 = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "svg9")
+    .attr("style", "border:none");
+
+function hideSVGs(noHide) {
+  var svgs = ["svg0","svg1","svg2","svg3","svg4","svg5","svg6","svg7","svg8","svg9"];
+
+  svgs.forEach(function(s) {
+    if(noHide != s) {
+      document.getElementById(s).style.visibility = 'hidden';
+    }
+  });
+
+  document.getElementById(noHide).style.visibility = 'visible';
+}
+/*
+var btns = document.getElementsByClassName("question");
+  for(var i=0; i<btns.length; i++) {
+    btns[i].onclick = function(d){
+      console.log(i);
+      hideSVGs("svg"+i);
+    }
+  };*/
+
+  document.getElementById("essay0").onclick = function() {
+  hideSVGs("svg0");}
+  ;
+document.getElementById("essay1").onclick = function() {
+  hideSVGs("svg1");
+};
+document.getElementById("essay2").onclick = function() {
+  hideSVGs("svg2");
+};
+document.getElementById("essay3").onclick = function() {
+  hideSVGs("svg3");
+};
+document.getElementById("essay4").onclick = function() {
+  hideSVGs("svg4");
+};
+document.getElementById("essay5").onclick = function() {
+  hideSVGs("svg5");
+};
+document.getElementById("essay6").onclick = function() {
+  hideSVGs("svg6");
+};
+document.getElementById("essay7").onclick = function() {
+  hideSVGs("svg7");
+};
+document.getElementById("essay8").onclick = function() {
+  hideSVGs("svg8");
+};
+document.getElementById("essay9").onclick = function() {
+  hideSVGs("svg9");
+};
+
 
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
 
-  loadData("essay1");
+  loadData("essay0", svg0);
+  loadData("essay1", svg1);
+  loadData("essay2", svg2);
+  loadData("essay3", svg3);
+  loadData("essay4", svg4);
+  loadData("essay5", svg5);
+  loadData("essay6", svg6);
+  loadData("essay7", svg7);
+  loadData("essay8", svg8);
+  loadData("essay9", svg9);
 
-  d3.select("#essay0").on("click", _ => {
-    console.log("button pressed");
-    svg.select("#node_g").remove();
-    loadData("essay0");
-  });
+  hideSVGs("svg0");
 
-function loadData(question) {
-  console.log("load data");
+function loadData(question, svg) {
 
   var node_g = svg.append("g").attr("id", "node_g").attr("height", height).attr("width", width);
   var essayq = question;
