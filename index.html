@@ -39,11 +39,36 @@
       padding:2px 5px;
       background:#aaa;
       color:#fff;
-
+      border:1px solid #777;
+      margin-right:3px;
     }
-    #close:hover {
+    #refresh:hover, #close:hover {
       cursor:pointer;
       background:#777;
+    }
+
+    #bubbleHeader {
+      float:right;
+      text-align:center;
+    }
+
+    .tipHeader {
+      text-transform: uppercase;
+      font-size:13px;
+      font-weight:bold;
+    }
+
+    .question {
+      margin-top:20px;
+      border:1px solid #333;
+      border-radius:10px;
+      font-size:20px;
+      background:#ddd;
+    }
+
+    .question:hover {
+      cursor:pointer;
+      background:#aaa;
     }
 
   </style>
@@ -61,6 +86,7 @@
   </div>
 
     <!-- A bit redundant, but don't merge these two-->
+  <div id="demographics-wrapper">
   <div id="demographics-div"> </div>
   <!-- <button id= "unsort">See Profiles</button>
   <button id="gender">Show Gender</button>
@@ -70,7 +96,6 @@
   <div id="filters"></div> -->
 
   <div id= "content">
-
     <div class="section" id="intro-section">
     <h2>Introduction</h2>
       <p class="intro-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
@@ -96,8 +121,21 @@
       <p class="gender-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
     </div>
   </div>
+</div>
 
-  <div id="bubbles"></div> <div id="bubbleText" style="width:100%;height:500px;overflow:auto;"></div>
+<div style="height:400px; width:100%;clear:both"> </div>
+
+<div id="wrapper">
+  <div id="bubbles" style="float:left;width:80%">
+  </div>
+  <div id="bubbleHeader">
+    <h3>Filters</h3>
+    <button id="essay0" class="question">My self summary</button><br>
+    <!-- <button id="essay1" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay1')">What I'm doing with my life</button><br> -->
+    <!-- <button id="essay2" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay2')">I'm really good at...</button><br> -->
+    <!-- <button id="essay3" class="question" onclick="document.getElementById('bubbles').innerHTML=''; loadData('essay3')"> The first thing people usually notice about me</button><br> -->
+  </div>
+  </div>
 </body>
 
 
@@ -116,10 +154,34 @@ var n = 200, // total number of nodes
 
 var clusters = new Array(m);
 
+// function loadData(question) {
+
+var tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .attr("id", "tooltip")
+      .style("opacity", 0);
+
+var svg = d3.select("#bubbles").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "border:none");
+
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
 
-  var essayq = "essay4";
+  loadData("essay1");
+
+  d3.select("#essay0").on("click", _ => {
+    console.log("button pressed");
+    svg.select("#node_g").remove();
+    loadData("essay0");
+  });
+
+function loadData(question) {
+  console.log("load data");
+
+  var node_g = svg.append("g").attr("id", "node_g").attr("height", height).attr("width", width);
+  var essayq = question;
 
   nodes = [];
 
@@ -135,7 +197,7 @@ d3.json("potato6.json", function(error, data) {
 
   var gender = "both";
   var jData = data.filter( d => (d.essay == essayq))[0];
-  top_both = jData.both.slice(50, 125);
+  top_both = jData.both.slice(50, 50+maletext.length);
   sampleData3 = {"children": top_both.map(function (d){ return  {"text": d.word, "count": d.count, "gender": "s"} }) };
   var sharedText = sampleData3.children.map(d => d.text);
 
@@ -216,15 +278,15 @@ d3.json("potato6.json", function(error, data) {
 
   function getRadius(d, mLen, fLen, sLen) {
     if(d.gender == "f") {
-      var scale = d3.scaleLinear().domain(fLen).range([10,50]);
+      var scale = d3.scaleLinear().domain(fLen).range([20,50]);
       return scale(d.count)
     }
     else if(d.gender == 'm') {
-      var scale = d3.scaleLinear().domain(mLen).range([10,50]);
+      var scale = d3.scaleLinear().domain(mLen).range([20,50]);
       return scale(d.count)
     }
     else {
-      var scale = d3.scaleLinear().domain(sLen).range([10,50]);
+      var scale = d3.scaleLinear().domain(sLen).range([20,50]);
       return scale(d.count)
     }
   }
@@ -258,16 +320,7 @@ d3.json("potato6.json", function(error, data) {
     .on('tick', layoutTick)
     .nodes(nodes);
 
-  var tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
-  var svg = d3.select("#bubbles").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("style", "border:none");
-
-  var elem = svg.selectAll("g")
+  var elem = node_g.selectAll("g")
       .data(nodes)
       .enter()
       .append("g")
@@ -277,12 +330,8 @@ d3.json("potato6.json", function(error, data) {
       //.attr("transform", function(d){return "translate("+d.x+",80)"})
 
   elem.on("click", function(d,i) {
-
-      displayText(d.text, d3.event.pageX, d3.event.pageY);
+     displayText(d.text, d3.event.pageX, d3.event.pageY);
     })
-    .on("mouseexit", function(d) {
-        tooltip.transition().duration(500).style("opacity", 0);
-    });
 
   var node = elem
       .append("circle")
@@ -300,12 +349,18 @@ d3.json("potato6.json", function(error, data) {
               .style("font-family", "Fira Mono")
               .style("font-size", 12);
 
+  function closeTooltip() {
+      console.log('in close');
+      this.parentNode.style.display = 'none';
+  }
+
   function displayText(word, pageX, pageY) {
     //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
+
     d3.csv("essays.csv", function(csv) {
       csv.map(function(row) {
-        if(row.essay4.search(word) != -1) {
+        if(row.essay4.search(word+" ") != -1) {
           first_essays.push(row.essay4);
         }
       });
@@ -320,16 +375,17 @@ d3.json("potato6.json", function(error, data) {
       var startInd = randEss.search(word);
       var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
 
-      var clickFn = "function() {this.parentNode.style('opacity', 0)}";
-
-      tooltip.transition().duration(200).style("opacity", .9);
-      tooltip.html("<button id='close' onclick=clickFn()>x</button><button id='refresh'>Refresh</button>" +finalStr)
+      tooltip.transition().duration(500).style("display","").style("opacity", .9);
+      tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)
         .style("left", (pageX) + "px")
         .style("top", (pageY - 50) + "px");
-      tooltip.append("span")
-        .attr('id', 'close')
-        .text('X')
-        .on("click", function() {this.parentNode.style('opacity', 0)});
+
+      document.getElementById ("close").addEventListener ("click", function(e) {
+        document.getElementById('tooltip').style.display = 'none';
+      });
+      document.getElementById ("refresh").addEventListener ("click", function(e) {
+        displayText(word, pageX, pageY);
+      });
     })
   }
 
@@ -387,6 +443,8 @@ d3.json("potato6.json", function(error, data) {
     return force;
 
   }
+
+}
 
 });
 

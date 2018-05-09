@@ -25,7 +25,7 @@ var canvasDOM = document.getElementById("canvas").getBoundingClientRect();
 var demodivDOM = document.getElementById("demographics-div").getBoundingClientRect();
 
 // SVG overlay
-var svg = d3.select('#demographics-div')
+var demosvg = d3.select('#demographics-div')
   .append('svg')
   .attr('width', canvasDOM.width)
   .attr('height', canvasDOM.height)
@@ -59,7 +59,9 @@ function makeViz(error, profiles) {
   drawPoints();
   animatePoints(randomLayout);
 
-  svg.on("mousemove", mousemoveActions);
+  demosvg
+  .on("mousemove", mousemoveActions)
+  .on("mouseout", _ => demotooltip.style("display", "none"));
 
   // Making filters
   var filters = [
@@ -116,7 +118,7 @@ function makeViz(error, profiles) {
   }
 
   function clearSVG() {
-    svg.selectAll("g").remove();
+    demosvg.selectAll("g").remove();
   }
 
   function clearCanvas() {
@@ -250,7 +252,7 @@ function makeViz(error, profiles) {
       .domain([0, max_count])
       .range([demo_height, padding_y]);
 
-    var chart = svg.append("g")
+    var chart = demosvg.append("g")
       .attr("width", demo_width)
       .attr("height", demo_height);
 
@@ -330,7 +332,7 @@ function makeViz(error, profiles) {
       .domain([1, d3.max(groups, x => x.count)])
       .range([0, max_r])
 
-    var viz = svg.append("g");
+    var viz = demosvg.append("g");
 
     var groupsEnter = viz.selectAll("g")
       .data(groups).enter();
@@ -403,7 +405,7 @@ function makeViz(error, profiles) {
         return d.count;
       });
 
-    var viz = svg.append("g");
+    var viz = demosvg.append("g");
 
     var node = viz.selectAll(".node")
       .data(bubble(nodes).descendants())
@@ -432,7 +434,7 @@ function makeViz(error, profiles) {
   function genderLayoutSVG(points) {
     male = points.filter(x => x.sex == "m");
     female = points.filter(x => x.sex == "f");
-    var labels = svg.append("g");
+    var labels = demosvg.append("g");
     labels.append("text")
       .text("Male Users: " + male.length)
       .attr("x", 100)
@@ -444,11 +446,9 @@ function makeViz(error, profiles) {
   }
 
   // BEGIN On scroll interaction
-  contentDiv = document.getElementById("content").getBoundingClientRect();
-  lastContentAnchor = contentDiv.offsetTop + contentDiv.height - demo_height;
 
   section_to_bounds = [];
-  padding = 200;
+  padding = 100;
   document.querySelectorAll(".section").forEach(s =>{
     console.log(s);
     divDOM = s.getBoundingClientRect();
@@ -457,6 +457,9 @@ function makeViz(error, profiles) {
         "bounds":[divDOM.y - padding, divDOM.y + divDOM.height - padding]
       });
   });
+
+  // lastSection = section_to_bounds[section_to_bounds.length - 1].bounds[0]
+  lastContentAnchor = section_to_bounds[section_to_bounds.length - 1].bounds[0] - demo_height + 2*padding;
 
   var lastY = document.documentElement.scrollTop;
 
@@ -476,22 +479,37 @@ function makeViz(error, profiles) {
   }
 
   window.addEventListener("scroll", _ => {
+    // By default, have the div scroll with you
+    d3.select("#demographics-div")
+    .style('position','fixed')
+    .style('top', "100px");
 
     var scrolltop = document.documentElement.scrollTop;
 
+    if (scrolltop < section_to_bounds[0].bounds[0]) {
+      d3.select("#demographics-div")
+      .style('position','relative')
+      .style('top', "0px");
+    }
+
+    if (scrolltop >= section_to_bounds[section_to_bounds.length - 1].bounds[0]){
+      d3.select("#demographics-div")
+      .style('position', 'relative')
+      .style('top', lastContentAnchor + "px");
+    }
+
+
+
     // Intro
     if (triggerFn("intro-section", scrolltop)) {
+      clearSVG();
       animatePoints(randomLayout);
     }
 
     // GENDER
     if (triggerFn("gender-section", scrolltop)) {
+      clearSVG();
       animatePoints(genderLayout);
-      genderLayoutSVG(points);
-
-      d3.select("#demographics-div")
-      .style("position", "absolute")
-      .style("top", lastContentAnchor +"px");
     }
 
     // AGE
