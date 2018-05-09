@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Helvetica+Neue" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
@@ -25,7 +26,7 @@
 
   <style>
     div.tooltip {
-      position: absolute;
+      /*position: absolute;
       text-align: center;
       width: 300px;
       max-height: 300px;
@@ -34,6 +35,17 @@
       background: lightsteelblue;
       border: 1px solid steelblue;
       border-radius: 8px;
+      overflow:auto;*/
+      position: absolute;
+      max-width: 300px;
+      max-height:300px;
+      padding: 10px;
+      margin-top: -20px;
+      background-color: dimgray;
+      color: white;
+      font-size:12px;
+      font-family: 'Fira Mono', monospace;
+      opacity: 0.85;
       overflow:auto;
     }
 
@@ -153,13 +165,11 @@
 <div class="bodytext">
   <!-- <div class="content"> -->
   <p class="intro-text"> Now that we have gone over the variety of demographics of the OkCupid users within the dataset scraped by Albert and Adriana from Reed College, we also have information on 9 essay questions that the user has answered. The 9 essay questions are fill-in-the-blank free response questions and have no limit in length so answers may range from short sentences to paragraphs. All 9 of the essay questions ask about information relating to the user and the exact question prompts are listed as filters in the word cloud below.
-  </p>
-
-  <p class="intro-text">
   We learned that the male population and female population differ in terms of demographic detail. Since OkCupid has a binary classification of sex as Male or Female, we were able to look at the top words used by Males, Females, and both Males and Females. The word cloud visualization is a result of tokenizing all of the user answers to the 9 essay questions and vectorizing the tokens in terms of word frequency in relation to the number of essays that words appeared in. The words selected were processed to ignore terms that were not interesting like common verbs, pronouns, and other words found commonly in speech.  
   </p>
   <!-- </div> -->
 </div>
+
 
 <div id="wrapper">
   <div id="bubbles" >
@@ -481,6 +491,9 @@ function loadData(question, svg) {
       .style("fill", function(d) {return d.color})
       .style("stroke", function(d) {return  getStroke(d.color)})
       .style("opacity", 1.0)
+      .on("mouseover", function(d) {
+        d3.select(this).attr("fill", getStroke(d.color));
+      })
 
 
   var label = elem
@@ -505,7 +518,7 @@ function loadData(question, svg) {
     d3.csv(essayq+".csv", function(csv) {
       var count = 0;
       for(i=0; i<d3.keys(csv).length; i++) {
-        if(count < 2) {
+        if(count < 3) {
           if((d3.values(csv)[i][essayq].search(word) != -1) 
             || (d3.values(csv)[i][essayq].search(word+",") != -1)
             || (d3.values(csv)[i][essayq].search(word+".") != -1)
@@ -523,7 +536,7 @@ function loadData(question, svg) {
       var randEss = first_essays[Math.floor(Math.random() * first_essays.length)];
 
       var startInd = randEss.search(word);
-      var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
+      var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;color:black;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
 
       tooltip.transition().duration(500).style("display","").style("opacity", .9);
       tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)
