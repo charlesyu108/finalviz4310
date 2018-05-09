@@ -55,6 +55,7 @@
     #bubbleHeader {
       float:right;
       text-align:center;
+      padding:10px;
     }
 
     .tipHeader {
@@ -67,8 +68,9 @@
       margin-top:20px;
       border:1px solid #333;
       border-radius:10px;
-      font-size:20px;
+      font-size:17px;
       background:#ddd;
+      padding:5px;
     }
 
     .question:hover {
@@ -151,14 +153,14 @@
     <h3>Filters</h3>
     <button id="essay0" class="question">My self summary</button><br>
     <button id="essay1" class="question">What I'm doing with my life</button><br>
-    <button id="essay2" class="question">What I'm doing with my life</button><br>
-    <button id="essay3" class="question">What I'm doing with my life</button><br>
-    <button id="essay4" class="question">What I'm doing with my life</button><br>
-    <button id="essay5" class="question">What I'm doing with my life</button><br>
-    <button id="essay6" class="question">What I'm doing with my life</button><br>
-    <button id="essay7" class="question">What I'm doing with my life</button><br>
-    <button id="essay8" class="question">What I'm doing with my life</button><br>
-    <button id="essay9" class="question">What I'm doing with my life</button><br>
+    <button id="essay2" class="question">I'm really good at..</button><br>
+    <button id="essay3" class="question"> The first thing people notice about me</button><br>
+    <button id="essay4" class="question">Favorite books, movies, show, music, food</button><br>
+    <button id="essay5" class="question">The six things I could never do without</button><br>
+    <button id="essay6" class="question">I spend a lot of time thinking about..</button><br>
+    <button id="essay7" class="question">On a typical Friday night I am..</button><br>
+    <button id="essay8" class="question">The most private thing I will admit</button><br>
+    <button id="essay9" class="question">You should message me if...</button><br>
   </div>
   </div>
 </body>
@@ -485,12 +487,20 @@ function loadData(question, svg) {
     //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
 
-    d3.csv("essays.csv", function(csv) {
-      csv.map(function(row) {
-        if(row.essay4.search(word+" ") != -1) {
-          first_essays.push(row.essay4);
+    d3.csv("profiles.csv", function(csv) {
+      var count = 0;
+      for(i=0; i<d3.keys(csv).length; i++) {
+        if(count < 2) {
+          if(d3.values(csv)[i][essayq].search(word) != -1) {
+            first_essays.push(d3.values(csv)[i][essayq]);
+            count++;
+          }
         }
-      });
+        else {
+          console.log('break' + count);
+          break;
+        }
+      };
 
       var randEss = first_essays[Math.floor(Math.random() * first_essays.length)];
 
