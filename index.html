@@ -293,7 +293,6 @@ document.getElementById("essay9").onclick = function() {
   hideSVGs("svg9");
 };
 
-
 d3.json("potato6.json", function(error, data) {
   if (error) throw error;
 
@@ -489,12 +488,17 @@ function loadData(question, svg) {
   function displayText(word, pageX, pageY) {
     //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
+    essayq = essayq == null ? "essay0" : essayq;
 
-    d3.csv(essayq+".csv", function(csv) {
+    d3.csv("essay5"+".csv", function(csv) {
       var count = 0;
       for(i=0; i<d3.keys(csv).length; i++) {
+        console.log(word);
         if(count < 2) {
-          if(d3.values(csv)[i][essayq].search(word) != -1) {
+          if((d3.values(csv)[i][essayq].search(word) != -1) 
+            || (d3.values(csv)[i][essayq].search(word+",") != -1)
+            || (d3.values(csv)[i][essayq].search(word+".") != -1) {
+            console.log(word + ' found');
             first_essays.push(d3.values(csv)[i][essayq]);
             count++;
           }
