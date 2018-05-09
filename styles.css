@@ -4,13 +4,13 @@ svg {
 
 canvas{
 /*  border: 3px solid black;*/
-margin-left: 50px;
+/* margin-left: 50px; */
 }
 
 .demotooltip {
   position: absolute;
   max-width: 400px;
-  padding: 10px;
+  padding: 20px;
   margin-top: -20px;
   pointer-events: none;
   background-color: dimgray;
@@ -56,8 +56,8 @@ margin-left: 50px;
 
 #demographics-div {
   float: left;
-  position: sticky;
-  top:100px;
+  position: relative;
+  margin-left: 50px;
   /* margin-right: 5px;
   margin-left:50px;
   margin-top: 100px; */
@@ -68,9 +68,11 @@ margin-left: 50px;
   padding-left: 5px;
   float: right;
   width: 35%;
+  font-family: "Fira Mono", monospace;
   /* margin-top: 100px;
   margin-right: 50px; */
 }
+
 
 h2 {
   font-family: 'Fira Mono', monospace;
@@ -78,8 +80,21 @@ h2 {
 
 .intro-text, .age-text,
 .so-text, .job-text, .gender-text {
-  font-family: 'Fira Mono', monospace;
-  font-weight: lighter;
+  font-family: 'Helvetica Neue';
+}
+
+.am-title {
+  font-family: "Fira Mono", monospace;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.aboutme {
+  font-family: "Helvetica Neue";
+}
+
+a {
+  color: #E8ED38;
 }
 
 p {

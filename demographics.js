@@ -59,7 +59,9 @@ function makeViz(error, profiles) {
   drawPoints();
   animatePoints(randomLayout);
 
-  demosvg.on("mousemove", mousemoveActions);
+  demosvg
+  .on("mousemove", mousemoveActions)
+  .on("mouseout", _ => demotooltip.style("display", "none"));
 
   // Making filters
   var filters = [
@@ -143,7 +145,9 @@ function makeViz(error, profiles) {
     if (filt.length > 0) {
       var select = filt[0];
       demotooltip
-      .html("<p>" + select.sex +", age "+select.age + "</p> <br> About Me <br>"+select.essay0)
+      // .html("<p>" + select.sex +", age "+select.age + "</p> <br> About Me <br>"+select.essay0)
+      .html(`<p> ${select.sex}, age ${select.age}</p>
+        <div class="am-title">About Me</div><div class="aboutme">${select.essay0}</div>`)
       .style("display", "inline")
       .style("top", (d3.event.pageY -34)+ "px")
       .style("left", (d3.event.pageX-12) + "px")
@@ -442,11 +446,9 @@ function makeViz(error, profiles) {
   }
 
   // BEGIN On scroll interaction
-  // contentDiv = document.getElementById("content").getBoundingClientRect();
-  // lastContentAnchor = contentDiv.offsetTop + contentDiv.height - demo_height;
 
   section_to_bounds = [];
-  padding = 200;
+  padding = 100;
   document.querySelectorAll(".section").forEach(s =>{
     console.log(s);
     divDOM = s.getBoundingClientRect();
@@ -455,6 +457,9 @@ function makeViz(error, profiles) {
         "bounds":[divDOM.y - padding, divDOM.y + divDOM.height - padding]
       });
   });
+
+  // lastSection = section_to_bounds[section_to_bounds.length - 1].bounds[0]
+  lastContentAnchor = section_to_bounds[section_to_bounds.length - 1].bounds[0] - demo_height + 2*padding;
 
   var lastY = document.documentElement.scrollTop;
 
@@ -474,18 +479,37 @@ function makeViz(error, profiles) {
   }
 
   window.addEventListener("scroll", _ => {
+    // By default, have the div scroll with you
+    d3.select("#demographics-div")
+    .style('position','fixed')
+    .style('top', "100px");
 
     var scrolltop = document.documentElement.scrollTop;
 
+    if (scrolltop < section_to_bounds[0].bounds[0]) {
+      d3.select("#demographics-div")
+      .style('position','relative')
+      .style('top', "0px");
+    }
+
+    if (scrolltop >= section_to_bounds[section_to_bounds.length - 1].bounds[0]){
+      d3.select("#demographics-div")
+      .style('position', 'relative')
+      .style('top', lastContentAnchor + "px");
+    }
+
+
+
     // Intro
     if (triggerFn("intro-section", scrolltop)) {
+      clearSVG();
       animatePoints(randomLayout);
     }
 
     // GENDER
     if (triggerFn("gender-section", scrolltop)) {
+      clearSVG();
       animatePoints(genderLayout);
-      genderLayoutSVG(points);
     }
 
     // AGE
