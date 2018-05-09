@@ -143,7 +143,9 @@ function makeViz(error, profiles) {
     if (filt.length > 0) {
       var select = filt[0];
       demotooltip
-      .html("<p>" + select.sex +", age "+select.age + "</p> <br> About Me <br>"+select.essay0)
+      // .html("<p>" + select.sex +", age "+select.age + "</p> <br> About Me <br>"+select.essay0)
+      .html(`<p> ${select.sex}, age ${select.age}</p>
+        <div class="am-title">About Me</div><div class="aboutme">${select.essay0}</div>`)
       .style("display", "inline")
       .style("top", (d3.event.pageY -34)+ "px")
       .style("left", (d3.event.pageX-12) + "px")
