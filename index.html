@@ -150,9 +150,9 @@
 <div style="height:400px; width:100%;clear:both"> </div>
 
 <div id="wrapper">
-  <div id="bubbles" style="float:left;width:80%">
+  <div id="bubbles" >
   </div>
-  <div id="bubbleHeader">
+  <div id="bubbleHeader" style="width:20%">
     <h3>Filters</h3>
     <button id="essay0" class="question">My self summary</button><br>
     <button id="essay1" class="question">What I'm doing with my life</button><br>
@@ -173,7 +173,7 @@
 
 <script>
 
-var width = 1200,
+var width = 1100,
     height =550,
     padding = 1.5, // separation between same-color nodes
     clusterPadding = 6, // separation between different-color nodes
@@ -506,11 +506,6 @@ function loadData(question, svg) {
       };
 
       var randEss = first_essays[Math.floor(Math.random() * first_essays.length)];
-
-      /*var essays = [];
-      for (var i = 0; i < 1; i++) {
-          essays.push(first_essays[Math.floor(Math.random()*first_essays.length)]);
-      }*/
 
       var startInd = randEss.search(word);
       var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
