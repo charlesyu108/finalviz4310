@@ -24,9 +24,16 @@ canvas{
 	font-family: 'Fira Mono', monospace;
 	color: #1f1f1f;
   background-color: #E8ED38 !important;
+  padding-bottom: 0px !important;
 }
 
-.icons-div {
+.jumbo-text {
+  position: relative;
+  left: 475px;
+  top: 200px;
+}
+
+/*.icons-div {
   display: inline;
   position: relative;
   top: -150px;
@@ -40,17 +47,24 @@ canvas{
 
 .laptop {
   height: 35px;
+}*/
+
+.laptop-color {
+  height: 350px;
+  position: relative;
+  left: 25px;
 }
 
 .display-5 {
 	font-weight: bold;
-  padding-top: 150px;
+  padding-top: 20px;
   padding-left: 50px;
+  position
 }
 
 .lead {
   padding-left: 50px;
-  padding-bottom: 50px;
+/*  padding-bottom: 50px;*/
   padding-top: 0px;
 }
 
@@ -84,7 +98,7 @@ h3 {
 }
 
 .intro-text, .age-text,
-.so-text, .job-text, .gender-text {
+.so-text, .job-text, .gender-text, .race-text {
   font-family: 'Helvetica Neue';
 }
 
