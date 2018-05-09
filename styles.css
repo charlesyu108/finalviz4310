@@ -78,9 +78,36 @@ h2 {
   font-family: 'Fira Mono', monospace;
 }
 
+h3 {
+  font-family: 'Fira Mono', monospace !important;
+  font-size: ;
+}
+
 .intro-text, .age-text,
 .so-text, .job-text, .gender-text {
   font-family: 'Helvetica Neue';
+}
+
+#bubbleHeader {
+  margin-right: 50px;
+}
+
+/*#bubbles {
+  width: 60%;
+}*/
+
+#svg0, #svg1, #svg2,
+#svg3, #svg4, #svg5,
+#svg6, #svg7, #svg8, #svg9 {
+  margin-bottom: 100px;
+}
+
+#essay0, #essay1, #essay2,
+#essay3, #essay4, #essay5,
+#essay6, #essay7, #essay8, #essay9 {
+  border: none;
+  font-family: "Helvetica Neue";
+  font-size: 15px;
 }
 
 .am-title {

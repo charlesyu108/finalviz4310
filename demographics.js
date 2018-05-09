@@ -284,7 +284,7 @@ function makeViz(error, profiles) {
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX - 12) + "px")
-          .html(`Age ${d.age} <br> Males ${d.m} <br> Females ${d.f}`)
+          .html(`Age: ${d.age} <br> Males: ${d.m} <br> Females: ${d.f}`)
       })
       .on("mouseout", d => {
         demotooltip
@@ -343,18 +343,115 @@ function makeViz(error, profiles) {
       .attr("cy", demo_height)
       .attr("r", 0)
 
+    groupsEnter
+    .append("text")
+      .attr("x", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r + 15 )
+      .attr("y", (d, i) => Math.floor(i / 2) * (height / 3) + 100)
+      .attr("dy", ".35em")
+      .text(d => {
+        gender = d.sex == "m" ? "male": "female";
+        return `${d.orientation}, ${gender}`
+      });
+
     circles.transition().duration(1500)
+      .attr("r", d => rscale(d.count))
       .attr("cx", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r)
-      .attr("cy", (d, i) => Math.floor(i / 2) * height / 3 + 100)
-      .attr("r", d => rscale(d.count));
+      .attr("cy", (d, i) => Math.floor(i / 2) * height / 3 + 100);
 
     circles
       .on("mousemove", d => {
         demotooltip
           .style("display", "inline")
-          .style("top", (d3.event.clientY - 34) + "px")
-          .style("left", (d3.event.clientX - 12) + "px")
+          .style("top", (d3.event.pageY - 34) + "px")
+          .style("left", (d3.event.pageX - 12) + "px")
           .html(`${d.orientation}, ${d.sex} <br> Count: ${d.count}`)
+      })
+      .on("mouseout", d => {
+        demotooltip
+          .style("display", "none")
+      });
+
+  }
+
+
+  function showRaceDist() {
+
+    ctx = canvas.node().getContext('2d');
+    ctx.save();
+    // erase what is on the canvas currently
+    ctx.clearRect(0, 0, demo_width, demo_height);
+    ctx.restore();
+
+    var races = ["white", "asian", "hispanic / latin", "black", "indian", "middle eastern", "pacific islander", "other"]
+    var groups = [];
+
+    races.forEach(o => {
+      groups.push({
+        "ethnicity": o,
+        "sex": "m",
+        "count": 0
+      });
+      groups.push({
+        "ethnicity": o,
+        "sex": "f",
+        "count": 0
+      });
+    });
+
+    points.forEach(d => {
+      var group = groups.filter(g => g.ethnicity == d.ethnicity && d.sex == g.sex);
+      if (group.length > 0) {
+        group[0].count += 1;
+      } else {
+        group = groups.filter(g => g.ethnicity == "other" && d.sex == g.sex);
+        group[0].count += 1;
+      }
+    });
+
+    var data = {
+      "children": groups
+    };
+
+    var bubble = d3.pack(data)
+      .size([demo_width, demo_height])
+      .padding(1.5);
+
+    var nodes = d3.hierarchy(data)
+      .sum(function(d) {
+        return d.count;
+      });
+
+    var viz = demosvg.append("g");
+
+    var node = viz.selectAll(".node")
+      .data(bubble(nodes).descendants())
+      .enter()
+      .filter(function(d) {
+        return !d.children
+      })
+      .append("g")
+      .attr("class", "node");
+
+    var circles = node.append("circle")
+      .attr("r", 0)
+      .style("fill", function(d, i) {
+        return d.data.sex == "m" ? blue : pink;
+      })
+      .attr("cx", d => d.x)
+      .attr("cy", demo_height)
+
+    circles.transition().duration(1500)
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y)
+      .attr("r", d => d.r);
+
+    circles
+      .on("mousemove", d => {
+        demotooltip
+          .style("display", "inline")
+          .style("top", (d3.event.pageY - 34) + "px")
+          .style("left", (d3.event.pageX- 12) + "px")
+          .html(`${d.data.ethnicity}, ${d.data.sex} <br> Count: ${d.data.count}`)
       })
       .on("mouseout", d => {
         demotooltip
@@ -422,12 +519,37 @@ function makeViz(error, profiles) {
         return d.data.sex == "m" ? blue : pink;
       })
       .attr("cx", d => d.x)
-      .attr("cy", demo_height)
+      .attr("cy", demo_height);
+
+    node
+      .on("mousemove", d => {
+        demotooltip
+        .style("display", "inline")
+        .style("top", (d3.event.pageY - 34) + "px")
+        .style("left", (d3.event.pageX - 12) + "px")
+        .html(`${d.data.job}, ${d.data.sex} (${d.data.count})`)
+      })
+      .on("mouseout", _ => {
+        demotooltip.style("display", "none");
+      });
 
     circles.transition().duration(1500)
       .attr("cx", d => d.x)
       .attr("cy", d => d.y)
       .attr("r", d => d.r);
+
+    circles
+      .on("mousemove", d => {
+        demotooltip
+          .style("display", "inline")
+          .style("top", (d3.event.pageY - 34) + "px")
+          .style("left", (d3.event.pageX- 12) + "px")
+          .html(`${d.data.job}, ${d.data.sex} <br> Count: ${d.data.count}`)
+      })
+      .on("mouseout", d => {
+        demotooltip
+          .style("display", "none")
+      });
 
   }
 
@@ -534,6 +656,19 @@ function makeViz(error, profiles) {
           pointsOff();
           clearSVG();
           showOrientationDist()
+        }, 1500);
+      }, 1500)
+    }
+
+    //Race
+    if (triggerFn("race-section", scrolltop)) {
+      animatePoints(randomLayout);
+      setTimeout(_ => {
+        animatePoints(toBottom);
+        setTimeout(_ => {
+          pointsOff();
+          clearSVG();
+          showRaceDist()
         }, 1500);
       }, 1500)
     }

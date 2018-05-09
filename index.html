@@ -17,6 +17,11 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $(this).scrollTop(0);
+    });
+  </script>
 
   <style>
     div.tooltip {
@@ -108,7 +113,8 @@
   <div id= "content">
     <div class="section" id="intro-section">
     <h2>Introduction</h2>
-      <p class="intro-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p class="intro-text">If you have ever dated anyone before &#128546;, you would know that dating involves people with a mutual interest in each other. But to get things started, someone needs to make the first move to get to know someone else. OkCupid is a platform that allows people to meet others. It is an American-based, internationally operating online dating friendship, and social networking website. San Francisco is an interesting location to look at since it has a unique dating culture and it is an upcoming tech scene with a large focus on work. Less than 27% of 30-year-olds in San Francisco are married. It is not until age 35 that the proportion of married people in San Francisco reaches 46%. <a src="https://qz.com/1041379/the-places-where-people-put-off-marriage-the-longest/">Help Me</a>
+</p>
     </div>
 
     <div class ="section" id="age-section">
@@ -119,6 +125,11 @@
     <div class ="section" id="orientation-section">
     <h2>Sexual Orientation</h2>
       <p class="so-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+
+    <div class ="section" id="race-section">
+    <h2>Race</h2>
+      <p class="race-text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
     </div>
 
     <div class ="section" id="job-section">
@@ -378,7 +389,7 @@ function loadData(question, svg) {
       return "#6f6fbc"
     }
     else {
-      return "#a17bb5"
+      // return "#a17bb5"
     }
   }
 
@@ -455,7 +466,7 @@ function loadData(question, svg) {
       .append("circle")
       .style("fill", function(d) {return d.color})
       .style("stroke", function(d) {return  getStroke(d.color)})
-      .style("opacity", 0.8)
+      .style("opacity", 1.0)
 
 
   var label = elem
