@@ -102,9 +102,9 @@ h3 {
   font-family: 'Helvetica Neue';
 }
 
-#bubbleHeader {
+/*#bubbleHeader {
   margin-right: 50px;
-}
+}*/
 
 /*#bubbles {
   width: 60%;
@@ -132,10 +132,6 @@ h3 {
 
 .aboutme {
   font-family: "Helvetica Neue";
-}
-
-a {
-  color: #E8ED38;
 }
 
 p {
