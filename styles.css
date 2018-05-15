@@ -25,6 +25,7 @@ canvas{
 	color: #1f1f1f;
   background-color: #E8ED38 !important;
   padding-bottom: 0px !important;
+  padding-top: 0px !important;
 }
 
 .jumbo-text {
@@ -52,18 +53,17 @@ canvas{
 .laptop-color {
   height: 350px;
   position: relative;
-  left: 25px;
+  left: 50px;
 }
 
 .display-5 {
 	font-weight: bold;
-  padding-top: 20px;
-  padding-left: 50px;
-  position
+  padding-left: 75px;
+  position:relative;
 }
 
 .lead {
-  padding-left: 50px;
+  padding-left: 75px;
 /*  padding-bottom: 50px;*/
   padding-top: 0px;
 }
@@ -112,6 +112,15 @@ h3 {
 .intro-text, .age-text,
 .so-text, .job-text, .gender-text, .race-text {
   font-family: 'Helvetica Neue';
+}
+
+.ur-text {
+  font-family: 'Helvetica Neue';
+  margin-bottom: 50px;
+}
+
+.footertext {
+  margin-bottom: 100px;
 }
 
 /*#bubbleHeader {
