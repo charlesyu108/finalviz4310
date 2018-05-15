@@ -2,7 +2,7 @@ import csv
 from collections import Counter
 
 import csv
-with open("profiles.csv") as f:
+with open("meep.csv") as f:
     reader = csv.reader(f, delimiter=",")
     essay0 = [];
     essay1 = [];
@@ -16,16 +16,16 @@ with open("profiles.csv") as f:
     essay9 = [];
     f.readline()
     for i in reader:
-        essay0.append(i[6])
-        essay1.append(i[7])
-        essay2.append(i[8])
-        essay3.append(i[9])
-        essay4.append(i[10])
-        essay5.append(i[11])
-        essay6.append(i[12])
-        essay7.append(i[13])
-        essay8.append(i[14])
-        essay9.append(i[15])
+        essay0.append(i[7])
+        essay1.append(i[8])
+        essay2.append(i[9])
+        essay3.append(i[10])
+        essay4.append(i[11])
+        essay5.append(i[12])
+        essay6.append(i[13])
+        essay7.append(i[14])
+        essay8.append(i[15])
+        essay9.append(i[16])
 
     with open("essay0.csv", "w") as c:
         fields = ["essay0"]
@@ -38,21 +38,21 @@ with open("profiles.csv") as f:
         fields = ["essay1"]
         writer=csv.writer(c)
         writer.writerow(fields)
-        for value in essay0:
+        for value in essay1:
             writer.writerow([value])
 
     with open("essay2.csv", "w") as c:
         fields = ["essay2"]
         writer=csv.writer(c)
         writer.writerow(fields)
-        for value in essay0:
+        for value in essay2:
             writer.writerow([value])
 
     with open("essay3.csv", "w") as c:
         fields = ["essay3"]
         writer=csv.writer(c)
         writer.writerow(fields)
-        for value in essay0:
+        for value in essay3:
             writer.writerow([value])
 
     with open("essay4.csv", "w") as c:
@@ -66,7 +66,7 @@ with open("profiles.csv") as f:
         fields = ["essay5"]
         writer=csv.writer(c)
         writer.writerow(fields)
-        for value in essay0:
+        for value in essay5:
             writer.writerow([value])
 
     with open("essay6.csv", "w") as c:

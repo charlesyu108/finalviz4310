@@ -382,7 +382,8 @@ function loadData(question, svg) {
             y: (height) * Math.random(),
             color: col,
             text: point.text,
-            count: point.count
+            count: point.count,
+            gender: getGender(point.gender)
           };
       if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
       nodes.push(d);
@@ -403,18 +404,24 @@ function loadData(question, svg) {
     }
   }
 
+  function getGender(gender) {
+    if(gender == "f") { return "female" }
+    else if(gender == "m") { return "male" }
+    else { return "both" }
+  }
+
   function getStroke(col) {
-    var fCol = "#ed6955";
-    var mCol = "#7a7ac9";
-    var sCol = "#9932CC";
+    var fCol = "#FC6C6E";
+    var mCol = "#61D6FF";
+    var sCol = "#c095c6";
     if( col == fCol) {
-      return "#d35847"
+      return "#f71313"
     }
     else if( col == mCol) {
-      return "#6f6fbc"
+      return "#09b4ed"
     }
     else {
-      // return "#a17bb5"
+      return "#b44dc6"
     }
   }
 
@@ -480,21 +487,24 @@ function loadData(question, svg) {
       .append("g")
       .on("mouseover", function(d) {
           d3.select(this).style("cursor", "pointer");
+          d3.select(this).select('circle').attr("fill", getStroke(d.color));
+          d3.select(this).select('text').attr("fill", "#111");
         })
+      .on("mouseout", function(d) {
+        d3.select(this).select('circle').attr("fill", d.color);
+        d3.select(this).select('text').attr("fill", "dimgray");
+      })
       //.attr("transform", function(d){return "translate("+d.x+",80)"})
 
   elem.on("click", function(d,i) {
-     displayText(d.text, d3.event.pageX, d3.event.pageY);
+     displayText(d.text, d3.event.pageX, d3.event.pageY, d.gender);
     })
 
   var node = elem
       .append("circle")
-      .style("fill", function(d) {return d.color})
-      .style("stroke", function(d) {return  getStroke(d.color)})
-      .style("opacity", 1.0)
-      .on("mouseover", function(d) {
-        d3.select(this).attr("fill", getStroke(d.color));
-      })
+      .attr("fill", function(d) {return d.color})
+      //.attr("stroke", function(d) {return  getStroke(d.color)})
+      .style("opacity", 0.9)
 
 
   var label = elem
@@ -502,7 +512,7 @@ function loadData(question, svg) {
               .text(function(d) {return d.text})
               .attr("class", "circleResize")
               .style("text-anchor", "middle")
-              .style("fill", "dimgray") //"#333"
+              .attr("fill", "dimgray") //"#333"
               .style("font-family", "Fira Mono")
               .style("font-size", 12);
 
@@ -511,12 +521,28 @@ function loadData(question, svg) {
       this.parentNode.style.display = 'none';
   }
 
-  function displayText(word, pageX, pageY) {
+  function displayText(word, pageX, pageY, gender) {
     //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
     essayq = essayq == null ? "essay0" : essayq;
 
     d3.csv(essayq+".csv", function(csv) {
+
+      /*d3.json("topwords.json", function(json) {
+        var inds = json[essayq.slice(5)];
+        var ind;
+        for(i=0; i<inds[gender].length; i++) {
+          if(inds[gender][i]["word"] == word) {
+            ind = inds[gender][i];
+            break;
+          };
+        }
+        console.log(d3.values(csv)[2]["essay0"]);
+        ind["index"].forEach(function(d) {
+
+        })
+      });*/
+      
       var count = 0;
       for(i=0; i<d3.keys(csv).length; i++) {
         if(count < 3) {
