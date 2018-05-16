@@ -229,7 +229,6 @@ function makeViz(error, profiles) {
         "f": 0
       });
     }
-
     points.forEach(d => {
       if (d.age >= 18 && d.age <= 100) {
         agePoints[d.age - 18].count += 1;
@@ -241,55 +240,144 @@ function makeViz(error, profiles) {
     max_count = d3.max(agePoints, x => x.count);
     padding_x = 50;
     padding_y = 100;
-    barWidth = demo_width / (max_age - min_age);
+    barWidth = (demo_width - padding_x) / (max_age - min_age);
     heightUnit = (demo_height - padding_y) / max_count;
 
-    var x_scale = d3.scale.linear()
-      .domain([18, 100])
-      .range([padding_x, width]);
+    var x_scale = d3.scaleLinear()
+      .domain([18, max_age])
+      .range([padding_x, demo_width]);
 
-    var y_scale = d3.scale.linear()
-      .domain([0, max_count])
-      .range([demo_height, padding_y]);
+    var xAxis = d3.axisBottom(x_scale);
 
     var chart = demosvg.append("g")
       .attr("width", demo_width)
       .attr("height", demo_height);
 
-    var bar = chart.selectAll("g")
+    var selected_y_base = 200;
+
+    var selected_height_scale = d3.scaleLinear()
+      .domain([0, max_count])
+      .range([0, 200]);
+
+    var legend = chart.append("g")
+      .style("opacity", 0);
+
+    var mselected = legend.append("rect")
+      .style("fill", blue)
+      // .attr("height", selected_height_scale(max_count))
+      .attr("width", 50)
+      .attr("x", demo_width - padding_x - 50);
+
+    var agelbl = legend.append("text")
+      .attr("x", demo_width - padding_x - 110)
+      .attr("y", selected_y_base - 150);
+
+    var mlabl = legend.append("text")
+      .text("M")
+      .attr("x", demo_width - padding_x - 50)
+      .attr("y", selected_y_base + 20);
+
+    var flabl = legend.append("text")
+      .text("F")
+      .attr("x", demo_width - padding_x - 110)
+      .attr("y", selected_y_base + 20);
+
+    var fselected = legend.append("rect")
+      .style("fill", pink)
+      // .attr("height", selected_height_scale(max_count))
+      .attr("width",50)
+      .attr("x", demo_width - padding_x - 110);
+
+    var mbar = chart.selectAll(".male_bar")
       .data(agePoints)
+      .attr("class", "male_bar")
+      .enter().append("g")
+      .attr("transform", (d, i) => "translate(" + (i * barWidth + padding_x) + "," + 0 + ")");
+    var fbar = chart.selectAll(".female_bar")
+      .data(agePoints)
+      .attr("class", "female_bar")
       .enter().append("g")
       .attr("transform", (d, i) => "translate(" + (i * barWidth + padding_x) + "," + 0 + ")");
 
-    bar.append("rect")
+    mbar.append("rect")
       .attr("width", barWidth)
-      .attr("y", y_scale(0))
+      .attr("y", d => d.height - demo_height/2)
       .transition().duration(1000)
-      .attr("y", d => y_scale(d.m))
+      .attr("y", demo_height/2)
       .attr("height", d => d.m * heightUnit)
       .attr("stroke", "white")
       .style("fill", blue);
 
-    bar.append("rect")
+    fbar.append("rect")
       .attr("width", barWidth)
-      .attr("y", y_scale(0))
+      .attr("y", demo_height/2)
       .transition().duration(1000)
-      .attr("y", d => y_scale(d.count))
+      .attr("y", d => demo_height/2 - d.f * heightUnit)
       .attr("height", d => d.f * heightUnit)
       .attr("stroke", "white")
       .style("fill", pink);
 
-    bar.on("mousemove", d => {
+    chart.append("g")
+      .attr("transform", "translate(" + barWidth/2 +"," + demo_height/2 + ")")
+      .call(xAxis);
+
+    mbar.on("mousemove", d => {
         demotooltip
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX - 12) + "px")
-          .html(`<p>Age: ${d.age} <br> Males: ${d.m} <br> Females: ${d.f}</p>`)
+          .html(`<p>Males aged ${d.age}: ${d.m} </p>`)
+
+          legend.style("opacity", 1);
+
+          agelbl.text(d.age + "-year olds");
+
+          mlabl.text(`M (${d.m})`)
+          flabl.text(`F (${d.f})`)
+
+          mselected
+            .attr("y", selected_y_base - selected_height_scale(d.m) )
+            .attr("height",selected_height_scale(d.m))
+
+          fselected
+            .attr("y", selected_y_base - selected_height_scale(d.f) )
+            .attr("height", selected_height_scale(d.f))
       })
       .on("mouseout", d => {
         demotooltip
-          .style("display", "none")
+          .style("display", "none");
+
+        legend.style("opacity", 0);
       });
+
+      fbar.on("mousemove", d => {
+          demotooltip
+            .style("display", "inline")
+            .style("top", (d3.event.pageY - 34) + "px")
+            .style("left", (d3.event.pageX - 12) + "px")
+            .html(`<p>Females aged ${d.age}: ${d.f} </p>`)
+
+            legend.style("opacity", 1);
+
+            agelbl.text(d.age + "-year olds");
+
+            mlabl.text(`M (${d.m})`)
+            flabl.text(`F (${d.f})`)
+
+            mselected
+              .attr("y", selected_y_base - selected_height_scale(d.m) )
+              .attr("height",selected_height_scale(d.m))
+
+            fselected
+              .attr("y", selected_y_base - selected_height_scale(d.f) )
+              .attr("height", selected_height_scale(d.f))
+        })
+        .on("mouseout", d => {
+          demotooltip
+            .style("display", "none");
+
+          legend.style("opacity", 0);
+        });
 
     ctx = canvas.node().getContext('2d');
     ctx.save();
@@ -643,7 +731,7 @@ function makeViz(error, profiles) {
     if (triggerFn("age-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        if (mode == "age-section") animatePoints(toBottom);
+        if (mode == "age-section") animatePoints(toCenter);
         setTimeout(x => {
           if (mode == "age-section"){
             pointsOff();
