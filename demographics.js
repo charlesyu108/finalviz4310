@@ -735,7 +735,7 @@ function makeViz(error, profiles) {
       });
   });
 
-  var lastContentAnchor = section_to_bounds[section_to_bounds.length - 1].bounds[0] - demo_height + 2*padding;
+  var lastContentAnchor = section_to_bounds[section_to_bounds.length - 1].bounds[0] - demo_height + padding;
   var lastY = document.documentElement.scrollTop;
   var mode = null;
 
