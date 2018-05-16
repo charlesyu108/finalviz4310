@@ -253,6 +253,16 @@ function makeViz(error, profiles) {
       .attr("width", demo_width)
       .attr("height", demo_height);
 
+    chart.append("text")
+    .text("M")
+    .attr("x", padding_x)
+    .attr("y", height/2 + 60);
+
+    chart.append("text")
+    .text("F")
+    .attr("x", padding_x)
+    .attr("y", height/2 - 20);
+
     var selected_y_base = 200;
 
     var selected_height_scale = d3.scaleLinear()
@@ -530,19 +540,25 @@ function makeViz(error, profiles) {
       .style("fill", function(d, i) {
         return d.data.sex == "m" ? blue : pink;
       })
-      .attr("cx", d => d.x)
-      .attr("cy", demo_height)
+      .attr("cx", demo_width/2 )
+      .attr("cy", demo_height/2 );
 
     var label = node.append("text")
+      .style("opacity", 0)
       .text(function(d) {return d.data.ethnicity})
       .style("text-anchor", "middle")
       .attr("fill", "dimgray") //"#333"
       .style("font-family", "Fira Mono")
       .style("font-size", function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })
+      .attr("x", demo_width/2 )
+      .attr("y", demo_height/2 );
+
+    label.transition().duration(1000)
+      .style("opacity", 1)
       .attr("x", function(d) { return d.x} )
       .attr("y", function(d) { return d.y} );
 
-    circles.transition().duration(1500)
+    circles.transition().duration(1000)
       .attr("cx", d => d.x)
       .attr("cy", d => d.y)
       .attr("r", d => d.r);
@@ -574,21 +590,31 @@ function makeViz(error, profiles) {
     var groups = [];
 
     jobs.forEach(o => {
+
       groups.push({
         "job": o,
-        "sex": "m",
-        "count": 0
+        "children": [
+          {
+            "job": o,
+            "sex": "m",
+            "count": 0
+          },
+          {
+            "job": o,
+            "sex": "f",
+            "count": 0
+          }
+        ]
       });
-      groups.push({
-        "job": o,
-        "sex": "f",
-        "count": 0
-      });
+
     });
 
     points.forEach(d => {
-      var group = groups.filter(g => g.job == d.job && d.sex == g.sex);
-      if (group.length > 0) group[0].count += 1;
+      var job_group = groups.filter(g => g.job == d.job);
+      if (job_group.length > 0){
+        var group = job_group[0].children.filter(g => g.sex == d.sex)[0];
+        group.count += 1;
+      }
     });
 
     var data = {
@@ -596,8 +622,8 @@ function makeViz(error, profiles) {
     };
 
     var bubble = d3.pack(data)
-      .size([demo_width, demo_height])
-      .padding(1.5);
+      .size([demo_width , demo_height ])
+      .padding(5);
 
     var nodes = d3.hierarchy(data)
       .sum(function(d) {
@@ -609,31 +635,63 @@ function makeViz(error, profiles) {
     var node = viz.selectAll(".node")
       .data(bubble(nodes).descendants())
       .enter()
+      .append("g")
+      .attr("class", d => d.children ? "node" : "leaf node");
+
+    var circles = node.append("circle")
+      .attr("cx", demo_width/2)
+      .attr("cy",demo_height/2)
+      .attr("r", 0)
+      .transition().duration(1000)
+      .attr("r", d => d.r)
+      .style("fill", function(d, i) {
+        if (!d.data.hasOwnProperty("sex")) return "none";
+        return d.data.sex == "m" ? blue : pink;
+      })
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y);
+
+
+    var layered_node = viz.selectAll(".nodetext")
+      .data(bubble(nodes).descendants())
+      .enter()
       .filter(function(d) {
         return !d.children
       })
       .append("g")
-      .attr("class", "node");
+      .attr("class", "nodetext");
 
-    var circles = node.append("circle")
-      .attr("r", 0)
-      .style("fill", function(d, i) {
-        return d.data.sex == "m" ? blue : pink;
+    layered_node
+      .append("text")
+      .attr("x", demo_width/2)
+      .attr("y",demo_height/2)
+      .style("opacity", 0)
+      .transition().duration(1000)
+      .style("opacity", 1)
+      .attr("x" , d => d.x - (d.r * 3) - 10 )
+      .attr("y" , (d, i) => (i == 13) ? d.y + d.r : d.y - d.r) // Special offset for index 13
+      .attr("dy", "0.35em")
+      .text( (d,i) => {
+        if (d.data.hasOwnProperty("sex")){
+           return d.data.sex == "f" ? d.data.job : null;
+        }
       })
+      .style("font-size", "11px")
+      .style("font-family", "Fira Mono");
+
+    //dummy circle
+    layered_circle = layered_node.append("circle")
       .attr("cx", d => d.x)
-      .attr("cy", demo_height);
+      .attr("cy", d => d.y)
+      .attr("r", d => d.r )
+      .style("opacity", 0);
 
-    var label = node.append("text")
-      .text(function(d) {return d.data.job})
-      .style("text-anchor", "middle")
-      .attr("fill", "dimgray") //"#333"
-      .style("font-family", "Fira Mono")
-      .style("font-size", function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })
-      .attr("x", function(d) { return d.x} )
-      .attr("y", function(d) { return d.y} );
 
-    node
+    layered_circle
       .on("mousemove", d => {
+        console.log("mousemove!", d);
+        if (!d.data.hasOwnProperty("sex")) return;
+
         demotooltip
         .style("display", "inline")
         .style("top", (d3.event.pageY - 34) + "px")
@@ -648,20 +706,6 @@ function makeViz(error, profiles) {
       .attr("cx", d => d.x)
       .attr("cy", d => d.y)
       .attr("r", d => d.r);
-
-    circles
-      .on("mousemove", d => {
-        demotooltip
-          .style("display", "inline")
-          .style("top", (d3.event.pageY - 34) + "px")
-          .style("left", (d3.event.pageX- 12) + "px")
-          .html(`<p>${d.data.job}, ${d.data.sex} <br> Count: ${d.data.count}</p>`)
-      })
-      .on("mouseout", d => {
-        demotooltip
-          .style("display", "none")
-      });
-
   }
 
   function genderLayoutSVG(points) {
@@ -779,7 +823,7 @@ function makeViz(error, profiles) {
     if (triggerFn("race-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        if (mode == "race-section") animatePoints(toBottom);
+        if (mode == "race-section") animatePoints(toCenter);
         setTimeout(_ => {
           if (mode == "race-section"){
             pointsOff();
@@ -794,7 +838,7 @@ function makeViz(error, profiles) {
     if (triggerFn("job-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        if (mode == "job-section") animatePoints(toBottom);
+        if (mode == "job-section") animatePoints(toCenter);
         setTimeout(_ => {
           if (mode == "job-section"){
             pointsOff();
