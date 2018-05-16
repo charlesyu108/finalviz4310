@@ -533,12 +533,21 @@ function makeViz(error, profiles) {
       .attr("cx", d => d.x)
       .attr("cy", demo_height)
 
+    var label = node.append("text")
+      .text(function(d) {return d.data.ethnicity})
+      .style("text-anchor", "middle")
+      .attr("fill", "dimgray") //"#333"
+      .style("font-family", "Fira Mono")
+      .style("font-size", function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })
+      .attr("x", function(d) { return d.x} )
+      .attr("y", function(d) { return d.y} );
+
     circles.transition().duration(1500)
       .attr("cx", d => d.x)
       .attr("cy", d => d.y)
       .attr("r", d => d.r);
 
-    circles
+    node
       .on("mousemove", d => {
         demotooltip
           .style("display", "inline")
@@ -613,6 +622,15 @@ function makeViz(error, profiles) {
       })
       .attr("cx", d => d.x)
       .attr("cy", demo_height);
+
+    var label = node.append("text")
+      .text(function(d) {return d.data.job})
+      .style("text-anchor", "middle")
+      .attr("fill", "dimgray") //"#333"
+      .style("font-family", "Fira Mono")
+      .style("font-size", function(d) { return Math.min(2 * d.r, (2 * d.r - 8) / this.getComputedTextLength() * 12) + "px"; })
+      .attr("x", function(d) { return d.x} )
+      .attr("y", function(d) { return d.y} );
 
     node
       .on("mousemove", d => {

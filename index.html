@@ -473,17 +473,17 @@ function loadData(question, svg) {
 
         // get sample of essays for each word
         if(gender == "male") {
-          for(var i=0; i<10; i++) {
+          for(var i=0; i<20; i++) {
             first_essays.push(male_only[ind["index"][i]][essayq]);
           }
         }
         else if(gender == "female") {
-          for(var i=0; i<10; i++) {
+          for(var i=0; i<20; i++) {
             first_essays.push(female_only[ind["index"][i]][essayq]);
           }
         }
         else {  
-          for(var i=0; i<5; i++) {
+          for(var i=0; i<10; i++) {
             first_essays.push(female_only[ind["findex"][i]][essayq]);
             first_essays.push(male_only[ind["mindex"][i]][essayq]);
           }
