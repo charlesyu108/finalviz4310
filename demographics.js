@@ -284,7 +284,7 @@ function makeViz(error, profiles) {
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX - 12) + "px")
-          .html(`Age: ${d.age} <br> Males: ${d.m} <br> Females: ${d.f}`)
+          .html(`<p>Age: ${d.age} <br> Males: ${d.m} <br> Females: ${d.f}</p>`)
       })
       .on("mouseout", d => {
         demotooltip
@@ -369,7 +369,7 @@ function makeViz(error, profiles) {
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX - 12) + "px")
-          .html(`${d.orientation}, ${d.sex} <br> Count: ${d.count}`)
+          .html(`<p>${d.orientation}, ${d.sex} <br> Count: ${d.count}</p>`)
       })
       .on("mouseout", d => {
         demotooltip
@@ -456,7 +456,7 @@ function makeViz(error, profiles) {
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX- 12) + "px")
-          .html(`${d.data.ethnicity}, ${d.data.sex} <br> Count: ${d.data.count}`)
+          .html(`<p>${d.data.ethnicity}, ${d.data.sex} <br> Count: ${d.data.count}</p>`)
       })
       .on("mouseout", d => {
         demotooltip
@@ -532,7 +532,7 @@ function makeViz(error, profiles) {
         .style("display", "inline")
         .style("top", (d3.event.pageY - 34) + "px")
         .style("left", (d3.event.pageX - 12) + "px")
-        .html(`${d.data.job}, ${d.data.sex} (${d.data.count})`)
+        .html(`<p>${d.data.job}, ${d.data.sex} (${d.data.count})</p>`)
       })
       .on("mouseout", _ => {
         demotooltip.style("display", "none");
@@ -549,7 +549,7 @@ function makeViz(error, profiles) {
           .style("display", "inline")
           .style("top", (d3.event.pageY - 34) + "px")
           .style("left", (d3.event.pageX- 12) + "px")
-          .html(`${d.data.job}, ${d.data.sex} <br> Count: ${d.data.count}`)
+          .html(`<p>${d.data.job}, ${d.data.sex} <br> Count: ${d.data.count}</p>`)
       })
       .on("mouseout", d => {
         demotooltip

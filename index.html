@@ -24,82 +24,6 @@
     });
   </script>
 
-  <style>
-    div.tooltip {
-      /*position: absolute;
-      text-align: center;
-      width: 300px;
-      max-height: 300px;
-      padding: 8px;
-      font: 12px Open Sans;
-      background: lightsteelblue;
-      border: 1px solid steelblue;
-      border-radius: 8px;
-      overflow:auto;*/
-      position: absolute;
-      max-width: 300px;
-      max-height:300px;
-      padding: 10px;
-      margin-top: -20px;
-      background-color: dimgray;
-      color: white;
-      font-size:12px;
-      font-family: 'Fira Mono', monospace;
-      opacity: 0.85;
-      overflow:auto;
-    }
-
-    #close, #refresh {
-      float:right;
-      display:inline-block;
-      position:relative;
-      padding:2px 5px;
-      background:#aaa;
-      color:#fff;
-      border:1px solid #777;
-      margin-right:3px;
-    }
-    #refresh:hover, #close:hover {
-      cursor:pointer;
-      background:#777;
-    }
-
-    #bubbleHeader {
-      float:right;
-      text-align:center;
-      padding:10px;
-    }
-
-    .tipHeader {
-      text-transform: uppercase;
-      font-size:13px;
-      font-weight:bold;
-    }
-
-    .question {
-      margin-top:20px;
-      border:1px solid #333;
-      border-radius:10px;
-      font-size:17px;
-      background:#ddd;
-      padding:5px;
-    }
-
-    .question:hover {
-      cursor:pointer;
-      background:#aaa;
-    }
-
-    #wrapper {
-      position:relative;
-    }
-
-    svg {
-      position:absolute;
-    }
-
-  </style>
-
 </head>
 
 <body>
@@ -179,7 +103,7 @@
   <div id="bubbles" >
   </div>
   <div id="bubbleHeader" style="width:15%">
-    <h3>Filters</h3>
+    <h3>Questions</h3>
     <button id="essay0" class="question">My self summary</button><br>
     <button id="essay1" class="question">What I'm doing with my life</button><br>
     <button id="essay2" class="question">I'm really good at..</button><br>
@@ -525,13 +449,19 @@ function loadData(question, svg) {
   }
 
   function displayText(word, pageX, pageY, gender) {
-    //document.getElementById("bubbleText").innerHTML = "";
     var first_essays = [];
     essayq = essayq == null ? "essay0" : essayq;
 
-    d3.csv(essayq+".csv", function(csv) {
+    d3.csv("meep.csv", function(csv) {
 
-      /*d3.json("topwords.json", function(json) {
+      var male_only = csv.filter(function(row) {
+        return row["sex"] == "m";
+      });
+      var female_only = csv.filter(function(row) {
+        return row["sex"] == "f";
+      });
+
+      d3.json("topwords.json", function(json) {
         var inds = json[essayq.slice(5)];
         var ind;
         for(i=0; i<inds[gender].length; i++) {
@@ -540,45 +470,47 @@ function loadData(question, svg) {
             break;
           };
         }
-        console.log(d3.values(csv)[2]["essay0"]);
-        ind["index"].forEach(function(d) {
 
-        })
-      });*/
-      
-      var count = 0;
-      for(i=0; i<d3.keys(csv).length; i++) {
-        if(count < 3) {
-          if((d3.values(csv)[i][essayq].search(word) != -1) 
-            || (d3.values(csv)[i][essayq].search(word+",") != -1)
-            || (d3.values(csv)[i][essayq].search(word+".") != -1)
-            || (d3.values(csv)[i][essayq].search(word+"!") != -1)) {
-            first_essays.push(d3.values(csv)[i][essayq]);
-            count++;
+        // get sample of essays for each word
+        if(gender == "male") {
+          for(var i=0; i<10; i++) {
+            first_essays.push(male_only[ind["index"][i]][essayq]);
           }
         }
-        else {
-          console.log('break' + count);
-          break;
+        else if(gender == "female") {
+          for(var i=0; i<10; i++) {
+            first_essays.push(female_only[ind["index"][i]][essayq]);
+          }
         }
-      };
+        else {  
+          for(var i=0; i<5; i++) {
+            first_essays.push(female_only[ind["findex"][i]][essayq]);
+            first_essays.push(male_only[ind["mindex"][i]][essayq]);
+          }
+        }
+        
+        
+          var randEss = first_essays[Math.floor(Math.random() * first_essays.length)];
 
-      var randEss = first_essays[Math.floor(Math.random() * first_essays.length)];
+          var startInd = randEss.search(word);
+          var finalStr = startInd == -1 ? randEss : 
+            (randEss.slice(0,startInd) + "<span style='background-color:yellow;color:black;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length));
 
-      var startInd = randEss.search(word);
-      var finalStr = randEss.slice(0,startInd) + "<span style='background-color:yellow;color:black;font-weight:bold'>" + word + "</span>" + randEss.slice(startInd+word.length);
+          tooltip.transition().duration(500).style("display","").style("opacity", .9);
+          tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)
+            .style("left", (pageX) + "px")
+            .style("top", (pageY - 50) + "px");
 
-      tooltip.transition().duration(500).style("display","").style("opacity", .9);
-      tooltip.html("<button id='close'>x</button><button id='refresh'>Refresh</button><br><br><span class='tipHeader'>"+word+"</span><br>" +finalStr)
-        .style("left", (pageX) + "px")
-        .style("top", (pageY - 50) + "px");
+        document.getElementById ("close").addEventListener ("click", function(e) {
+          tooltip.transition().style("display",'none');
+        });
 
-      document.getElementById ("close").addEventListener ("click", function(e) {
-        tooltip.transition().duration(800).style("display",'none');
+        document.getElementById ("refresh").addEventListener ("click", function(e) {
+          displayText(word, pageX, pageY, gender);
+        });
+
       });
-      document.getElementById ("refresh").addEventListener ("click", function(e) {
-        displayText(word, pageX, pageY);
-      });
+
     })
   }
 
