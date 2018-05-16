@@ -339,19 +339,24 @@ function makeViz(error, profiles) {
 
     var circles = groupsEnter.append("circle")
       .style("fill", d => d.sex == "m" ? blue : pink)
-      .attr("cx", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r)
-      .attr("cy", demo_height)
+      // .attr("cx", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r)
+      .attr("cx",demo_width/2)
+      .attr("cy", demo_height/2)
       .attr("r", 0)
 
-    groupsEnter
+    var labels = groupsEnter
     .append("text")
       .attr("x", d => d.sex == "m" ? demo_width / 2 - max_r : demo_width / 2 + max_r + 15 )
       .attr("y", (d, i) => Math.floor(i / 2) * (height / 3) + 100)
       .attr("dy", ".35em")
+      .style("opacity", 0)
       .text(d => {
         gender = d.sex == "m" ? "male": "female";
         return `${d.orientation}, ${gender}`
       });
+
+    labels.transition().duration(1700)
+      .style("opacity", 1.0);
 
     circles.transition().duration(1500)
       .attr("r", d => rscale(d.count))
@@ -570,7 +575,7 @@ function makeViz(error, profiles) {
   // BEGIN On scroll interaction
 
   section_to_bounds = [];
-  padding = 100;
+  padding = 200;
   document.querySelectorAll(".section").forEach(s =>{
     console.log(s);
     divDOM = s.getBoundingClientRect();
@@ -580,10 +585,9 @@ function makeViz(error, profiles) {
       });
   });
 
-  // lastSection = section_to_bounds[section_to_bounds.length - 1].bounds[0]
-  lastContentAnchor = section_to_bounds[section_to_bounds.length - 1].bounds[0] - demo_height + 2*padding;
-
+  var lastContentAnchor = section_to_bounds[section_to_bounds.length - 1].bounds[0] - demo_height + 2*padding;
   var lastY = document.documentElement.scrollTop;
+  var mode = null;
 
   function triggerFn(contentName, currY) {
     range = section_to_bounds.filter(x => x.id == contentName)[0].bounds;
@@ -620,7 +624,8 @@ function makeViz(error, profiles) {
       .style('top', lastContentAnchor + "px");
     }
 
-
+    current = section_to_bounds.filter(x => scrolltop > x.bounds[0] && scrolltop < x.bounds[1])
+    if (current.length > 0) mode = current[0].id;
 
     // Intro
     if (triggerFn("intro-section", scrolltop)) {
@@ -638,11 +643,13 @@ function makeViz(error, profiles) {
     if (triggerFn("age-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        animatePoints(toBottom);
+        if (mode == "age-section") animatePoints(toBottom);
         setTimeout(x => {
-          pointsOff();
-          clearSVG();
-          showAgeDist()
+          if (mode == "age-section"){
+            pointsOff();
+            clearSVG();
+            showAgeDist()
+          }
         }, 1500);
       }, 1500);
     }
@@ -651,11 +658,13 @@ function makeViz(error, profiles) {
     if (triggerFn("orientation-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        animatePoints(toBottom);
+        if (mode == "orientation-section") animatePoints(toCenter);
         setTimeout(_ => {
-          pointsOff();
-          clearSVG();
-          showOrientationDist()
+          if (mode == "orientation-section") {
+            pointsOff();
+            clearSVG();
+            showOrientationDist()
+          }
         }, 1500);
       }, 1500)
     }
@@ -664,11 +673,13 @@ function makeViz(error, profiles) {
     if (triggerFn("race-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        animatePoints(toBottom);
+        if (mode == "race-section") animatePoints(toBottom);
         setTimeout(_ => {
-          pointsOff();
-          clearSVG();
-          showRaceDist()
+          if (mode == "race-section"){
+            pointsOff();
+            clearSVG();
+            showRaceDist()
+          }
         }, 1500);
       }, 1500)
     }
@@ -677,11 +688,13 @@ function makeViz(error, profiles) {
     if (triggerFn("job-section", scrolltop)) {
       animatePoints(randomLayout);
       setTimeout(_ => {
-        animatePoints(toBottom);
+        if (mode == "job-section") animatePoints(toBottom);
         setTimeout(_ => {
-          pointsOff();
-          clearSVG();
-          showJobDist()
+          if (mode == "job-section"){
+            pointsOff();
+            clearSVG();
+            showJobDist()
+          }
         }, 1500);
       }, 1500)
     }
