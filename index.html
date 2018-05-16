@@ -100,9 +100,9 @@
 
 
 <div id="wrapper">
-  <div id="bubbles" >
+  <div id="bubbles" style="margin-top: 110px">
   </div>
-  <div id="bubbleHeader" style="width:15%">
+  <div id="bubbleHeader" style="width:15%;margin-top:-70px">
     <h3>Questions</h3>
     <button id="essay0" class="question">My self summary</button><br>
     <button id="essay1" class="question">What I'm doing with my life</button><br>
@@ -198,19 +198,16 @@ function hideSVGs(noHide) {
   svgs.forEach(function(s) {
     if(noHide != s) {
       document.getElementById(s).style.visibility = 'hidden';
+      document.getElementById("essay"+s.slice(3)).style.background = '#ddd';
+      document.getElementById("essay"+s.slice(3)).style.color = '#000';
     }
   });
 
   document.getElementById(noHide).style.visibility = 'visible';
+  document.getElementById("essay"+noHide.slice(3)).style.background = '#555';
+  document.getElementById("essay"+noHide.slice(3)).style.color = '#fff';
+
 }
-/*
-var btns = document.getElementsByClassName("question");
-  for(var i=0; i<btns.length; i++) {
-    btns[i].onclick = function(d){
-      console.log(i);
-      hideSVGs("svg"+i);
-    }
-  };*/
 
   document.getElementById("essay0").onclick = function() {
   hideSVGs("svg0");}
@@ -473,17 +470,17 @@ function loadData(question, svg) {
 
         // get sample of essays for each word
         if(gender == "male") {
-          for(var i=0; i<20; i++) {
+          for(var i=0; i<30; i++) {
             first_essays.push(male_only[ind["index"][i]][essayq]);
           }
         }
         else if(gender == "female") {
-          for(var i=0; i<20; i++) {
+          for(var i=0; i<30; i++) {
             first_essays.push(female_only[ind["index"][i]][essayq]);
           }
         }
         else {  
-          for(var i=0; i<10; i++) {
+          for(var i=0; i<15; i++) {
             first_essays.push(female_only[ind["findex"][i]][essayq]);
             first_essays.push(male_only[ind["mindex"][i]][essayq]);
           }
