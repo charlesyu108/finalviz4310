@@ -39,6 +39,15 @@
     <img src="laptop-colors.png" class="laptop-color">
   </div>
 
+  <div id="loader" style="font-family: Fira Mono;">
+    <img src="loading.gif"/>
+    <br>
+    <br>
+    Loading ...
+  </div>
+
+  <div id="body-content">
+
     <!-- A bit redundant, but don't merge these two-->
   <div id="demographics-wrapper">
   <div id="demographics-div"> </div>
@@ -114,8 +123,22 @@
     <button id="essay9" class="question">You should message me if...</button><br>
   </div>
   </div>
+  <div style="height:100px; width:100%;clear:both"> </div>
+  <div class="bodytext">
+    <p class="intro-text">
+      There were some interesting and unexpected results found in the word cloud. For example, "parallel parking" was a top phrase used by women to answer the question "I'm really good at..." In the question "What I'm doing with my life", popular words for male users included tech-related words like "software", "startup", and "engineer", while popular words with female users included many school-related words like "education", "graduate" and "masters".
+    </p>
+    <p class="intro-text">
+      Though this word cloud is not intended to provide a comprehensive analysis of the personalities of male and female OkCupid users, we hope that it will be able to reveal more about the way single men and women in San Francisco choose to portray themselves in their quest for love.  
+    </p>
+  </div>
+  <div class="footertext">
+    <p class="intro-text" style="font-family: 'Fira Mono', monospace">
+    -- By Cece Phu, Charles Yu, Gary Gao, Michelle Yang
+    </p>
+  </div>
+</div>
 </body>
-
 
 <script src="demographics.js"></script>
 
@@ -572,20 +595,6 @@ function loadData(question, svg) {
 <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script> -->
-<div style="height:100px; width:100%;clear:both"> </div>
-<div class="bodytext">
-  <p class="intro-text">
-    There were some interesting and unexpected results found in the word cloud. For example, "parallel parking" was a top phrase used by women to answer the question "I'm really good at..." In the question "What I'm doing with my life", popular words for male users included tech-related words like "software", "startup", and "engineer", while popular words with female users included many school-related words like "education", "graduate" and "masters".
-  </p>
-  <p class="intro-text">
-    Though this word cloud is not intended to provide a comprehensive analysis of the personalities of male and female OkCupid users, we hope that it will be able to reveal more about the way single men and women in San Francisco choose to portray themselves in their quest for love.  
-  </p>
-</div>
-<div class="footertext">
-  <p class="intro-text" style="font-family: 'Fira Mono', monospace">
-  -- By Cece Phu, Charles Yu, Gary Gao, Michelle Yang
-  </p>
-</div>
 
 
 </html>

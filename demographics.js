@@ -3,7 +3,35 @@
  * Some of this code is borrowed from https://bl.ocks.org/pbeshai/65420c8d722cdbb0600b276c3adcc6e8.
  */
 
+ // Define functions for views pre/post-loaded data
+beforeLoaded();
+
+function beforeLoaded() {
+  d3.select("#body-content")
+  .style("visibility", "hidden");
+
+  d3.select(".jumbotron")
+  .style("opacity", 0.6)
+}
+
+// display content after all the prep is loaded.
+function showContent() {
+  d3.select('#loader')
+  .style("display", "none")
+  .transition().duration(200);
+
+  d3.select(".jumbotron")
+  .style("opacity", 1.0)
+  .transition().duration(200);
+
+
+  d3.select("#body-content")
+  .style("visibility", "visible")
+  .transition().duration(200);
+}
+
 var bodyDOM = document.body.getBoundingClientRect();
+
 // Define Canvas Related params
 const demo_width = bodyDOM.width * 0.60;
 const demo_height = 600;
@@ -33,6 +61,7 @@ var demosvg = d3.select('#demographics-div')
   .style("top", canvasDOM.top - demodivDOM.top)
   .style("left", canvasDOM.left - demodivDOM.left);
 
+
 var demotooltip = d3.select("body").append("div")
   .attr("class", "demotooltip")
   .style("display", "none");
@@ -41,6 +70,7 @@ var demotooltip = d3.select("body").append("div")
 d3.queue().defer(d3.csv, "meep.csv").await(makeViz);
 
 function makeViz(error, profiles) {
+  showContent();
 
   //makeViz globals
   const points = profiles;
@@ -83,7 +113,6 @@ function makeViz(error, profiles) {
 
     filterPoints(filts);
     drawPoints();
-
   }
 
   filters.forEach(d => {
@@ -851,7 +880,6 @@ function makeViz(error, profiles) {
 
     lastY = scrolltop;
   })
-
 
 } // End of makeViz
 
